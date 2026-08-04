@@ -40,4 +40,38 @@
 
         .scale-row { display: grid; grid-template-columns: 1fr 1fr 100px; padding: 15px; border-bottom: 1px solid var(--gray-light); align-items: center; }
         .btn-action { background: var(--gray-light); border: none; color: var(--white); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
-        .btn-rotate { background: var(--primary); color:
+        .btn-rotate { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
+
+        .presence-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .presence-item { display: flex; flex-direction: column; gap: 10px; }
+        .absent-fields { display: none; margin-top: 5px; }
+
+        .ranking-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 5px; border-radius: 8px; }
+        .top-rank { background: rgba(255,107,0,0.15); border: 1px solid var(--primary); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--dark-soft); padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; }
+
+        .cal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .cal-day { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 10px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .cal-day:hover { border-color: var(--primary); }
+        .cal-day.done { border-color: var(--green); background: rgba(0,200,83,0.05); }
+        .cal-day.done .type { color: var(--green); }
+
+        .notice-input { display: flex; gap: 10px; margin-bottom: 20px; }
+        .notice-item { background: var(--gray-light); padding: 10px 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+
+        .status-badge { padding: 4px 8px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; }
+        .bg-ok { background: rgba(0,200,83,0.2); color: var(--green); }
+        .bg-warn { background: rgba(255,179,0,0.2); color: var(--yellow); }
+        .bg-error { background: rgba(255,59,48,0.2); color: var(--red); }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-box">
+        <div class="login-logo"><img src="logo-midia.png" alt="Logo"></div>
+        <h2>Portal Mídia</h2>
+        <p style="color:var(--gray); font-size:0.8rem; margin-bottom:20px">Acesso Restrito</p>
+        <input type="password" id="pass" class="login-input" 
