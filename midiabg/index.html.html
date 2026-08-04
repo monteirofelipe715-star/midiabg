@@ -74,4 +74,252 @@
         <div class="login-logo"><img src="logo-midia.png" alt="Logo"></div>
         <h2>Portal Mídia</h2>
         <p style="color:var(--gray); font-size:0.8rem; margin-bottom:20px">Acesso Restrito</p>
-        <input type="password" id="pass" class="login-input" 
+        <input type="password" id="pass" class="login-input" placeholder="Senha da Equipe">
+        <button class="login-btn" onclick="login()">Entrar</button>
+    </div>
+</div>
+
+<div id="portal">
+    <header>
+        <div class="container nav">
+            <div class="nav-brand">
+                <div class="nav-logo"><img src="logo-midia.png" width="100%"></div>
+                <span style="font-weight:700">MÍDIA <span style="color:var(--primary)">ADMBG</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#escala">Escala</a>
+                <a href="#presenca">Presença</a>
+                <a href="#calendario">Posts</a>
+                <a href="#ranking">Ranking</a>
+                <a href="#avisos">Avisos</a>
+                <a href="https://drive.google.com" target="_blank" class="btn-drive">📁 Drive</a>
+                <button onclick="logout()" style="color:var(--red)">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section style="text-align:center">
+            <h1 style="font-size:2rem">Olá, <span style="color:var(--primary)">Equipe!</span></h1>
+            <p style="color:var(--gray)">Sara • Letícia • Gabriela • Kauane • Eva</p>
+            <div style="margin-top:15px; font-size:0.9rem; font-weight:600">⛪ Próximo Culto: Domingo 19h00 (Sede)</div>
+        </section>
+
+        <section id="escala">
+            <div class="section-header">
+                <h2>📅 Escala de Domingo</h2>
+                <button class="btn-rotate" onclick="rotateScale()">🔄 Gerar Nova Escala</button>
+            </div>
+            <div class="card" id="scale-container"></div>
+            <p id="last-update" style="font-size:0.7rem; color:var(--gray); margin-top:10px"></p>
+        </section>
+
+        <section id="presenca">
+            <div class="section-header">
+                <h2>📋 Presença do Culto</h2>
+                <span id="presence-count" style="color:var(--primary); font-weight:700">0 de 5 presentes</span>
+            </div>
+            <div class="card presence-list" id="presence-list"></div>
+            <button class="btn-rotate" style="margin-top:20px; width:100%" onclick="savePresence()">Salvar Presença</button>
+        </section>
+
+        <section id="calendario">
+            <div class="section-header">
+                <h2>📱 Calendário de Posts</h2>
+                <span id="post-stats" style="font-size:0.9rem">0 de 7 concluídos</span>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+        </section>
+
+        <section id="ranking">
+            <div class="section-header"><h2>🏆 Ranking de Postagens</h2></div>
+            <div class="card" id="ranking-list"></div>
+        </section>
+
+        <section id="avisos">
+            <div class="section-header"><h2>📌 Avisos da Equipe</h2></div>
+            <div class="notice-input">
+                <input type="text" id="notice-text" class="login-input" style="margin:0" placeholder="Digite um aviso...">
+                <button class="btn-rotate" onclick="addNotice()">Postar</button>
+            </div>
+            <div id="notice-list"></div>
+        </section>
+
+        <section style="text-align:center; padding:30px 0">
+            <p style="color:var(--gray); font-size:0.8rem">AD Madureira • Bento Gonçalves/RS</p>
+            <p style="color:var(--gray); font-size:0.7rem; margin-top:5px">Pr. Presidente Gideon Barros</p>
+        </section>
+    </div>
+</div>
+
+<script>
+const PASSWORD = 'midia2026';
+const members = ['Sara', 'Letícia', 'Gabriela', 'Kauane', 'Eva'];
+const roles = ['Câmera/Projeção', 'Stories/Instagram', 'Fotos do Culto', 'Slides do Culto', 'Stories/Instagram'];
+const postTypes = [
+    { day: 'Seg', type: 'Versículo do dia' },
+    { day: 'Ter', type: 'Aviso de culto' },
+    { day: 'Qua', type: 'Reel de louvor' },
+    { day: 'Qui', type: 'Devocional' },
+    { day: 'Sex', type: 'Foto do culto' },
+    { day: 'Sáb', type: 'Story ao vivo' },
+    { day: 'Dom', type: 'Resumo do culto' }
+];
+
+function login() {
+    const pass = document.getElementById('pass').value;
+    if (pass === PASSWORD) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('portal').style.display = 'block';
+        initAll();
+    } else {
+        alert('Senha incorreta!');
+    }
+}
+
+function logout() {
+    document.getElementById('portal').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('pass').value = '';
+}
+
+let scaleOffset = 0;
+function initScale() {
+    renderScale();
+}
+function renderScale() {
+    const container = document.getElementById('scale-container');
+    let html = '';
+    members.forEach((member, i) => {
+        const roleIndex = (i + scaleOffset) % roles.length;
+        html += `<div class="scale-row">
+            <span style="font-weight:600">${member}</span>
+            <span style="color:var(--gray); font-size:0.9rem">${roles[roleIndex]}</span>
+            <span class="status-badge bg-ok">Confirmado</span>
+        </div>`;
+    });
+    container.innerHTML = html;
+    document.getElementById('last-update').textContent = 'Última atualização: ' + new Date().toLocaleString('pt-BR');
+}
+function rotateScale() {
+    scaleOffset++;
+    renderScale();
+}
+
+function initPresence() {
+    const container = document.getElementById('presence-list');
+    let html = '';
+    members.forEach((member, i) => {
+        html += `<div class="presence-item">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <span style="font-weight:600">${member}</span>
+                <input type="checkbox" id="pres-${i}" onchange="updatePresence()" style="width:20px; height:20px; cursor:pointer">
+            </div>
+            <div class="absent-fields" id="absent-${i}">
+                <input type="text" class="login-input" style="margin:0; font-size:0.8rem" placeholder="Motivo da falta...">
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+function updatePresence() {
+    let count = 0;
+    members.forEach((_, i) => {
+        const cb = document.getElementById('pres-' + i);
+        const absent = document.getElementById('absent-' + i);
+        if (cb.checked) { count++; absent.style.display = 'none'; }
+        else { absent.style.display = 'block'; }
+    });
+    document.getElementById('presence-count').textContent = count + ' de ' + members.length + ' presentes';
+}
+function savePresence() {
+    alert('Presença salva com sucesso!');
+}
+
+function initCalendar() {
+    const container = document.getElementById('cal-grid');
+    let html = '';
+    postTypes.forEach((post, i) => {
+        html += `<div class="cal-day" id="cal-${i}" onclick="togglePost(${i})">
+            <div style="font-weight:700; font-size:0.9rem">${post.day}</div>
+            <div class="type" style="color:var(--gray); font-size:0.8rem; margin-top:5px">${post.type}</div>
+            <div style="margin-top:8px; font-size:0.7rem; color:var(--gray)">Clique para marcar</div>
+        </div>`;
+    });
+    container.innerHTML = html;
+    updatePostStats();
+}
+let postDone = [false, false, false, false, false, false, false];
+function togglePost(i) {
+    postDone[i] = !postDone[i];
+    const el = document.getElementById('cal-' + i);
+    if (postDone[i]) el.classList.add('done');
+    else el.classList.remove('done');
+    updatePostStats();
+}
+function updatePostStats() {
+    const count = postDone.filter(d => d).length;
+    document.getElementById('post-stats').textContent = count + ' de 7 concluídos';
+}
+
+function initRanking() {
+    const container = document.getElementById('ranking-list');
+    const ranking = members.map((m, i) => ({ name: m, posts: Math.floor(Math.random() * 15) + 1 }));
+    ranking.sort((a, b) => b.posts - a.posts);
+    let html = '';
+    ranking.forEach((item, i) => {
+        const cls = i === 0 ? 'ranking-item top-rank' : 'ranking-item';
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + 'º';
+        html += `<div class="${cls}">
+            <span>${medal} <strong>${item.name}</strong></span>
+            <span style="color:var(--primary); font-weight:700">${item.posts} posts</span>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function initNotices() {
+    const saved = JSON.parse(localStorage.getItem('notices') || '[]');
+    renderNotices(saved);
+}
+function addNotice() {
+    const text = document.getElementById('notice-text').value.trim();
+    if (!text) return;
+    const notices = JSON.parse(localStorage.getItem('notices') || '[]');
+    notices.unshift({ text, date: new Date().toLocaleDateString('pt-BR') });
+    localStorage.setItem('notices', JSON.stringify(notices));
+    document.getElementById('notice-text').value = '';
+    renderNotices(notices);
+}
+function renderNotices(notices) {
+    const container = document.getElementById('notice-list');
+    if (notices.length === 0) {
+        container.innerHTML = '<p style="color:var(--gray); font-size:0.9rem">Nenhum aviso ainda.</p>';
+        return;
+    }
+    let html = '';
+    notices.forEach((n, i) => {
+        html += `<div class="notice-item">
+            <div><strong>${n.text}</strong><br><small style="color:var(--gray)">${n.date}</small></div>
+            <button class="btn-action" onclick="removeNotice(${i})" style="color:var(--red)">Excluir</button>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+function removeNotice(i) {
+    const notices = JSON.parse(localStorage.getItem('notices') || '[]');
+    notices.splice(i, 1);
+    localStorage.setItem('notices', JSON.stringify(notices));
+    renderNotices(notices);
+}
+
+function initAll() {
+    initScale();
+    initPresence();
+    initCalendar();
+    initRanking();
+    initNotices();
+}
+</script>
+</body>
+</html>
