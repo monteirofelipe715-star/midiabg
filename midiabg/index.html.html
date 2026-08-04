@@ -38,6 +38,15 @@
         .card { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 14px; padding: 20px; transition: 0.3s; }
         .card:hover { border-color: var(--primary); }
 
+        .motivation-box { background: linear-gradient(135deg, rgba(255,107,0,0.1), rgba(255,107,0,0.02)); border: 1px solid rgba(255,107,0,0.3); border-radius: 14px; padding: 30px; text-align: center; margin-bottom: 10px; }
+        .motivation-text { font-size: 1.15rem; font-style: italic; color: var(--white); line-height: 1.6; }
+        .motivation-author { font-size: 0.8rem; color: var(--primary); margin-top: 10px; font-weight: 600; }
+
+        .week-responsible { background: linear-gradient(135deg, rgba(255,107,0,0.15), rgba(255,107,0,0.03)); border: 1px solid var(--primary); border-radius: 14px; padding: 25px; text-align: center; }
+        .week-label { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; }
+        .week-name { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 8px 0; }
+        .week-role { font-size: 0.85rem; color: var(--white); }
+
         .scale-row { display: grid; grid-template-columns: 1fr 1fr 100px; padding: 15px; border-bottom: 1px solid var(--gray-light); align-items: center; }
         .btn-action { background: var(--gray-light); border: none; color: var(--white); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
         .btn-rotate { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
@@ -48,9 +57,6 @@
 
         .ranking-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 5px; border-radius: 8px; }
         .top-rank { background: rgba(255,107,0,0.15); border: 1px solid var(--primary); }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--dark-soft); padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; }
 
         .cal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
         .cal-day { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 10px; padding: 15px; cursor: pointer; transition: 0.3s; }
@@ -103,6 +109,21 @@
             <h1 style="font-size:2rem">Olá, <span style="color:var(--primary)">Equipe!</span></h1>
             <p style="color:var(--gray)">Sara • Letícia • Gabriela • Kauane • Eva</p>
             <div style="margin-top:15px; font-size:0.9rem; font-weight:600">⛪ Próximo Culto: Domingo 19h00 (Sede)</div>
+        </section>
+
+        <section>
+            <div class="motivation-box">
+                <div class="motivation-text" id="motivation-text">Carregando...</div>
+                <div class="motivation-author" id="motivation-author"></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="week-responsible">
+                <div class="week-label">⭐ Responsável da Semana</div>
+                <div class="week-name" id="week-name">—</div>
+                <div class="week-role" id="week-role">—</div>
+            </div>
         </section>
 
         <section id="escala">
@@ -166,6 +187,42 @@ const postTypes = [
     { day: 'Dom', type: 'Resumo do culto' }
 ];
 
+const motivations = [
+    { text: '"Tudo o que fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens."', author: 'Colossenses 3:23' },
+    { text: '"O Senhor é a minha luz e a minha salvação; a quem temerei?"', author: 'Salmos 27:1' },
+    { text: '"Cada um exerça o dom que recebeu para servir aos outros."', author: '1 Pedro 4:10' },
+    { text: '"Tudo posso naquele que me fortalece."', author: 'Filipenses 4:13' },
+    { text: '"Firme o coração, pois a recompensa virá."', author: 'Hebreus 10:35' },
+    { text: '"Servi uns aos outros com o dom que cada um recebeu."', author: '1 Pedro 4:10' },
+    { text: '"O trabalho da mídia leva a Palavra a quem não pode estar presente."', author: 'Equipe ADMBG' }
+];
+
+function getWeekNumber(d) {
+    const date = new Date(d);
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    const week1 = new Date(date.getFullYear(), 0, 4);
+    return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+function initMotivation() {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const m = motivations[dayOfWeek % motivations.length];
+    document.getElementById('motivation-text').textContent = m.text;
+    document.getElementById('motivation-author').textContent = '— ' + m.author;
+}
+
+function initWeekResponsible() {
+    const weekNum = getWeekNumber(new Date());
+    const baseWeek = 32;
+    const offset = ((weekNum - baseWeek) % members.length + members.length) % members.length;
+    const responsible = members[offset];
+    const role = roles[offset];
+    document.getElementById('week-name').textContent = responsible;
+    document.getElementById('week-role').textContent = 'Função: ' + role;
+}
+
 function login() {
     const pass = document.getElementById('pass').value;
     if (pass === PASSWORD) {
@@ -184,9 +241,7 @@ function logout() {
 }
 
 let scaleOffset = 0;
-function initScale() {
-    renderScale();
-}
+function initScale() { renderScale(); }
 function renderScale() {
     const container = document.getElementById('scale-container');
     let html = '';
@@ -201,10 +256,7 @@ function renderScale() {
     container.innerHTML = html;
     document.getElementById('last-update').textContent = 'Última atualização: ' + new Date().toLocaleString('pt-BR');
 }
-function rotateScale() {
-    scaleOffset++;
-    renderScale();
-}
+function rotateScale() { scaleOffset++; renderScale(); }
 
 function initPresence() {
     const container = document.getElementById('presence-list');
@@ -232,9 +284,7 @@ function updatePresence() {
     });
     document.getElementById('presence-count').textContent = count + ' de ' + members.length + ' presentes';
 }
-function savePresence() {
-    alert('Presença salva com sucesso!');
-}
+function savePresence() { alert('Presença salva com sucesso!'); }
 
 function initCalendar() {
     const container = document.getElementById('cal-grid');
@@ -253,8 +303,7 @@ let postDone = [false, false, false, false, false, false, false];
 function togglePost(i) {
     postDone[i] = !postDone[i];
     const el = document.getElementById('cal-' + i);
-    if (postDone[i]) el.classList.add('done');
-    else el.classList.remove('done');
+    if (postDone[i]) el.classList.add('done'); else el.classList.remove('done');
     updatePostStats();
 }
 function updatePostStats() {
@@ -293,10 +342,7 @@ function addNotice() {
 }
 function renderNotices(notices) {
     const container = document.getElementById('notice-list');
-    if (notices.length === 0) {
-        container.innerHTML = '<p style="color:var(--gray); font-size:0.9rem">Nenhum aviso ainda.</p>';
-        return;
-    }
+    if (notices.length === 0) { container.innerHTML = '<p style="color:var(--gray); font-size:0.9rem">Nenhum aviso ainda.</p>'; return; }
     let html = '';
     notices.forEach((n, i) => {
         html += `<div class="notice-item">
@@ -314,6 +360,8 @@ function removeNotice(i) {
 }
 
 function initAll() {
+    initMotivation();
+    initWeekResponsible();
     initScale();
     initPresence();
     initCalendar();
