@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipe de Mídia | AD Madureira - Bento Gonçalves</title>
+    <meta name="description" content="Portal interno da Equipe de Mídia da AD Madureira">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #FF6B00; --primary-dark: #E55A00; --primary-light: #FF8533;
+            --dark: #0A0A0A; --dark-soft: #1A1A1A; --dark-card: #1F1F1F;
+            --gray: #8B8B8B; --gray-light: #2A2A2A; --white: #FFFFFF;
+            --green: #00C853; --red: #FF3B30; --yellow: #FFB300;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--white); line-height: 1.6; overflow-x: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 30%, rgba(255,107,0,0.08) 0%, transparent 60%), var(--dark); }
+        .login-box { background: var(--dark-soft); border: 1px solid var(--gray-light); border-radius: 20px; padding: 48px 40px; max-width: 420px; width: 90%; text-align: center; }
+        .login-logo { width: 120px; height: 120px; margin: 0 auto 24px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .login-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .login-box h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+        .login-box p { color: var(--gray); font-size: 0.95rem; margin-bottom: 32px; }
+        .login-input { width: 100%; background: var(--dark); border: 1px solid var(--gray-light); border-radius: 10px; padding: 14px 20px; color: var(--white); font-size: 1rem; font-family: inherit; margin-bottom: 16px; }
+        .login-input:focus { outline: none; border-color: var(--primary); }
+        .login-btn { width: 100%; background: var(--primary); color: var(--white); border: none; border-radius: 10px; padding: 14px; font-size: 1rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.2s; }
+        .login-btn:hover { background: var(--primary-dark); }
+        .login-hint { margin-top: 20px; font-size: 0.8rem; color: var(--gray); }
+        .login-error { color: var(--red); font-size: 0.85rem; margin-bottom: 12px; display: none; }
+
+        #portal { display: none; }
+        header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--gray-light); }
+        .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+        .nav-brand { display: flex; align-items: center; gap: 12px; }
+        .nav-logo { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
+        .nav-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .nav-title { font-size: 0.95rem; font-weight: 700; }
+        .nav-title span { color: var(--primary); }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a { color: var(--gray); text-decoration: none; font-size: 0.85rem; font-weight: 500; padding: 8px 14px; border-radius: 8px; transition: all 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--white); background: var(--gray-light); }
+        .logout-btn { background: none; border: 1px solid var(--gray-light); color: var(--gray); padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .logout-btn:hover { border-color: var(--red); color: var(--red); }
+        .menu-toggle { display: none; background: none; border: none; color: var(--white); font-size: 1.5rem; cursor: pointer; }
+
+        .portal-hero { padding: 60px 0 40px; text-align: center; background: radial-gradient(circle at 50% 0%, rgba(255,107,0,0.1) 0%, transparent 50%); }
+        .portal-hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 12px; }
+        .portal-hero h1 span { color: var(--primary); }
+        .portal-hero p { color: var(--gray); font-size: 1.05rem; max-width: 500px; margin: 0 auto; }
+        .next-service { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.3); color: var(--primary-light); padding: 8px 20px; border-radius: 100px; font-size: 0.85rem; font-weight: 600; margin-top: 20px; }
+
+        section { padding: 48px 0; }
+        .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+        .section-header h2 { font-size: 1.4rem; font-weight: 700; }
+        .section-header .icon { width: 40px; height: 40px; background: rgba(255,107,0,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .section-header .line { flex: 1; height: 1px; background: var(--gray-light); }
+
+        .scale-container { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 14px; overflow: hidden; }
+        .scale-header { display: grid; grid-template-columns: 100px 1fr; background: var(--dark-soft); border-bottom: 1px solid var(--gray-light); }
+        .scale-header > div { padding: 14px 16px; font-size: 0.8rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+        .scale-row { display: grid; grid-template-columns: 100px 1fr; border-bottom: 1px solid var(--gray-light); transition: background 0.15s; }
+        .scale-row:last-child { border-bottom: none; }
+        .scale-row:hover { background: rgba(255,107,0,0.03); }
+        .scale-row > div { padding: 16px; font-size: 0.9rem; border-right: 1px solid var(--gray-light); }
+        .scale-row > div:last-child { border-right: none; }
+        .scale-day { font-weight: 700; color: var(--primary); }
+        .scale-role { font-size: 0.75rem; color: var(--gray); margin-top: 2px; }
+
+        .checklist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .checklist-card { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 14px; padding: 24px; }
+        .checklist-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .check-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 0.88rem; color: #C0C0C0; }
+        .check-box { width: 20px; height: 20px; min-width: 20px; border: 2px solid var(--gray-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .check-box.checked { background: var(--primary); border-color: var(--primary); }
+        .check-box.checked::after { content: '✓'; color: var(--white); font-size: 0.75rem; font-weight: 700; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .cal-day { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 10px; padding: 16px 12px; min-height: 120px; display: flex; flex-direction: column; }
+        .cal-day-name { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .cal-post { background: rgba(255,107,0,0.08); border-left: 2px solid var(--primary); padding: 6px 8px; border-radius: 4px; margin-bottom: 6px; font-size: 0.75rem; color: #C0C0C0; }
+        .cal-post .type { font-weight: 600; color: var(--primary-light); display: block; font-size: 0.7rem; text-transform: uppercase; }
+
+        .equip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .equip-card { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 16px; }
+        .equip-icon { width: 48px; height: 48px; background: rgba(255,107,0,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+        .equip-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 2px; }
+        .equip-info p { font-size: 0.8rem; color: var(--gray); }
+        .equip-status { margin-left: auto; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
+        .status-ok { background: rgba(0,200,83,0.15); color: var(--green); }
+        .status-check { background: rgba(255,179,0,0.15); color: var(--yellow); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; } .menu-toggle { display: block; }
+            .scale-header, .scale-row { grid-template-columns: 80px 1fr; }
+            .calendar-grid { grid-template-columns: 1fr; }
+            .cal-day { min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="logo-midia.png" alt="Equipe de Mídia">
+            </div>
+            <h1>Portal da Equipe</h1>
+            <p>Digite a senha para acessar a escala, checklist e calendário</p>
+            <div class="login-error" id="loginError">Senha incorreta. Tente novamente.</div>
+            <input type="password" class="login-input" id="loginPassword" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
+            <button class="login-btn" onclick="doLogin()">Entrar</button>
+            <p class="login-hint">Dica: a senha é <strong>midia2026</strong></p>
+        </div>
+    </div>
+
+    <div id="portal">
+        <header>
+            <div class="container">
+                <nav class="nav">
+                    <div class="nav-brand">
+                        <div class="nav-logo"><img src="logo-midia.png" alt="Equipe de Mídia"></div>
+                        <div class="nav-title">Equipe de <span>Mídia</span> • AD Madureira</div>
+                    </div>
+                    <div class="nav-links">
+                        <a href="#escala" class="active">Escala</a>
+                        <a href="#checklist">Checklist</a>
+                        <a href="#calendario">Calendário</a>
+                        <a href="#equipamentos">Equipamentos</a>
+                        <button class="logout-btn" onclick="doLogout()">Sair</button>
+                    </div>
+                    <button class="menu-toggle">☰</button>
+                </nav>
+            </div>
+        </header>
+
+        <div class="portal-hero">
+            <div class="container">
+                <h1>Portal da <span>Equipe de Mídia</span></h1>
+                <p>Sara • Letícia • Gabriela • Kauane • Eva</p>
+                <div class="next-service">⛪ Próximo culto: Domingo às 19h00</div>
+            </div>
+        </div>
+
+        <section id="escala">
+            <div class="container">
+                <div class="section-header">
+                    <div class="icon">📅</div>
+                    <h2>Escala do Culto — Domingo 19h00</h2>
+                    <div class="line"></div>
+                </div>
+                <div class="scale-container">
+                    <div class="scale-header">
+                        <div>Função</div>
+                        <div>Domingo 19h00 — Culto da Celebração</div>
+                    </div>
+                    <div class="scale-row">
+                        <div><div class="scale-day">📷 Foto</div><div class="scale-role">iPhone 1 — Vertical</div></div>
+                        <div>Sara</div>
+                    </div>
+                    <div class="scale-row">
+                        <div><div class="scale-day">🎥 Vídeo</div><div class="scale-role">iPhone 2 — Reels</div></div>
+                        <div>Kauane</div>
+                    </div>
+                    <div class="scale-row">
+                        <div><div class="scale-day">🎞️ Câmera</div><div class="scale-role">Fotos horizontais</div></div>
+                        <div>Gabriela</div>
+                    </div>
+                    <div class="scale-row">
+                        <div><div class="scale-day">📽️ Projetor 1</div><div class="scale-role">Slides — Operação</div></div>
+                        <div>Eva</div>
+                    </div>
+                    <div class="scale-row">
+                        <div><div class="scale-day">📽️ Projetor 2</div><div class="scale-role">Slides — Preparação</div></div>
+                        <div>Letícia</div>
+                    </div>
+                </div>
+                <p style="margin-top:16px;color:var(--gray);font-size:0.85rem;text-align:center">
+                    ⚡ Rodízio a cada 2 semanas — todas aprendem todas as funções
+                </p>
+            </div>
+        </section>
+
+        <section id="checklist" style="background:var(--dark-soft)">
+            <div class="container">
+                <div class="section-header">
+                    <div class="icon">✅</div>
+                    <h2>Checklist por Função</h2>
+                    <div class="line"></div>
+                </div>
+                <div class="checklist-grid">
+                    <div class="checklist-card">
+                        <h3>📷 Fotografia (iPhone 1)</h3>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Chegar 30 min antes do culto</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Limpar lente do iPhone</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Verificar bateria e armazenamento</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Definir ângulos: banda, púlpito, congregação</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Fotos sem flash durante oração</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Captar momento de comunhão ao final</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Enviar melhores fotos para a pasta do Drive</div>
+                    </div>
+                    <div class="checklist-card">
+                        <h3>🎥 Vídeo (iPhone 2)</h3>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Chegar 30 min antes do culto</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Limpar lente e estabilizar (tripé se possível)</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Verificar bateria e espaço</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Gravar clipes curtos (15-30s) do louvor</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Gravar trecho da pregação (1-2 min)</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Filmagem silenciosa durante oração</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Enviar clipes para a pasta do Drive</div>
+                    </div>
+                    <div class="checklist-card">
+                        <h3>🎞️ Câmera Fotográfica</h3>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Checar bateria, cartão e lente</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Configurar modo horizontal</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Definir ISO e balanço de branco</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Foto da congregação inteira</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Foto do pregador no púlpito</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Foto ambiente do salão</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Transferir fotos para o Drive após culto</div>
+                    </div>
+                    <div class="checklist-card">
+                        <h3>📽️ Projetor — Operação</h3>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Chegar 30 min antes</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Testar projetor e cabos</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Abrir apresentação no PC</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Alinhar ordem do culto com o pregador</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Operar letras dos hinos no momento</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Projetar versículos durante a palavra</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Slide de avisos e encerramento</div>
+                    </div>
+                    <div class="checklist-card">
+                        <h3>📽️ Projetor — Preparação</h3>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Preparar slides dos hinos da semana</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Buscar versículos da pregação</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Preparar slides de avisos</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Preparar slide de encerramento</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Revisar ortografia dos slides</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Sincronizar com operador(a)</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Preparar próximo bloco durante o atual</div>
+                    </div>
+                    <div class="checklist-card">
+                        <h3>📱 Pós-Culto — Edição e Postagem</h3>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Criar pasta do Drive com a data</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Selecionar 15-20 melhores fotos</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Cortar 2-3 clipes para reels (15-30s)</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Editar no CapCut (legendar, música)</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Postar stories do domingo à noite</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Agendar posts da semana toda</div>
+                        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Conferir se tudo foi postado</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="calendario">
+            <div class="container">
+                <div class="section-header">
+                    <div class="icon">📆</div>
+                    <h2>Calendário de Conteúdo Semanal</h2>
+                    <div class="line"></div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="cal-day">
+                        <div class="cal-day-name">Dom</div>
+                        <div class="cal-post"><span class="type">Stories</span>Ao vivo + foto do culto</div>
+                    </div>
+                    <div class="cal-day">
+                        <div class="cal-day-name">Seg</div>
+                        <div class="cal-post"><span class="type">Reel</span>Melhores momentos (30s)</div>
+                    </div>
+                    <div class="cal-day">
+                        <div class="cal-day-name">Ter</div>
+                        <div class="cal-post"><span class="type">Feed</span>Carrossel de fotos (5-6)</div>
+                    </div>
+                    <div class="cal-day">
+                        <div class="cal-day-name">Qua</div>
+                        <div class="cal-post"><span class="type">Feed</span>Versículo + devocional curto</div>
+                    </div>
+                    <div class="cal-day">
+                        <div class="cal-day-name">Qui</div>
+                        <div class="cal-post"><span class="type">Stories</span>Behind the scenes — equipe</div>
+                    </div>
+                    <div class="cal-day">
+                        <div class="cal-day-name">Sex</div>
+                        <div class="cal-post"><span class="type">Reel</span>Trecho da pregação (15-30s)</div>
+                    </div>
+                    <div class="cal-day">
+                        <div class="cal-day-name">Sáb</div>
+                        <div class="cal-post"><span class="type">Stories+Feed</span>Convite para o culto + horários</div>
+                    </div>
+                </div>
+                <p style="margin-top:16px;color:var(--gray);font-size:0.85rem;text-align:center">
+                    📌 Responsável da semana: <strong style="color:var(--primary)">Sara</strong> — coordenação e agendamento
+                </p>
+            </div>
+        </section>
+
+        <section id="equipamentos" style="background:var(--dark-soft)">
+            <div class="container">
+                <div class="section-header">
+                    <div class="icon">🎬</div>
+                    <h2>Equipamentos</h2>
+                    <div class="line"></div>
+                </div>
+                <div class="equip-grid">
+                    <div class="equip-card">
+                        <div class="equip-icon">📱</div>
+                        <div class="equip-info"><h4>iPhone 1</h4><p>Fotos verticais — stories e feed</p></div>
+                        <div class="equip-status status-ok">Operacional</div>
+                    </div>
+                    <div class="equip-card">
+                        <div class="equip-icon">📱</div>
+                        <div class="equip-info"><h4>iPhone 2</h4><p>Vídeo vertical — reels e stories</p></div>
+                        <div class="equip-status status-ok">Operacional</div>
+                    </div>
+                    <div class="equip-card">
+                        <div class="equip-icon">📷</div>
+                        <div class="equip-info"><h4>Câmera Fotográfica</h4><p>Fotos horizontais — feed e site</p></div>
+                        <div class="equip-status status-check">Verificar cartão</div>
+                    </div>
+                    <div class="equip-card">
+                        <div class="equip-icon">📽️</div>
+                        <div class="equip-info"><h4>Projetor</h4><p>Slides, hinos e versículos</p></div>
+                        <div class="equip-status status-ok">Operacional</div>
+                    </div>
+                    <div class="equip-card">
+                        <div class="equip-icon">💻</div>
+                        <div class="equip-info"><h4>PC da Mídia</h4><p>Apresentação e edição de slides</p></div>
+                        <div class="equip-status status-ok">Operacional</div>
+                    </div>
+                    <div class="equip-card">
+                        <div class="equip-icon">🟠</div>
+                        <div class="equip-info"><h4>Tripé</h4><p>Estabilização para filmagem</p></div>
+                        <div class="equip-status status-check">Confirmar com a equipe</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="background:var(--dark);padding:32px 0;text-align:center;border-top:1px solid var(--gray-light)">
+            <div class="container">
+                <p style="color:var(--gray);font-size:0.85rem">
+                    🔥 Equipe de Mídia • AD Madureira • Bento Gonçalves/RS<br>
+                    Portal interno — acesso restrito à equipe • Culto: Domingo 19h
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function doLogin() {
+            const password = document.getElementById('loginPassword').value;
+            const error = document.getElementById('loginError');
+            if (password === 'midia2026') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('portal').style.display = 'block';
+                sessionStorage.setItem('midiaAuth', 'true');
+            } else { error.style.display = 'block'; }
+        }
+        function doLogout() {
+            sessionStorage.removeItem('midiaAuth');
+            document.getElementById('portal').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('loginPassword').value = '';
+        }
+        if (sessionStorage.getItem('midiaAuth') === 'true') {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('portal').style.display = 'block';
+        }
+        function toggleCheck(item) { item.querySelector('.check-box').classList.toggle('checked'); }
+        document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+            const links = document.querySelector('.nav-links');
+            links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+            links.style.position = 'absolute';
+            links.style.top = '64px';
+            links.style.right = '0';
+            links.style.flexDirection = 'column';
+            links.style.background = 'var(--dark-soft)';
+            links.style.padding = '16px';
+            links.style.borderRadius = '0 0 0 12px';
+            links.style.border = '1px solid var(--gray-light)';
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
