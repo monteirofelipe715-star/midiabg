@@ -65,14 +65,25 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .bg-warn{background:rgba(255,179,0,0.2);color:var(--yellow)}
 .bg-error{background:rgba(255,59,48,0.2);color:var(--red)}
 .hinos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
-.hino-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:12px;padding:20px;text-align:center;transition:0.3s;cursor:pointer;text-decoration:none;color:var(--white);display:flex;flex-direction:column;align-items:center;gap:8px}
+.hino-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:12px;padding:20px;text-align:center;transition:0.3s;cursor:pointer;color:var(--white);display:flex;flex-direction:column;align-items:center;gap:8px}
 .hino-card:hover{border-color:var(--primary);transform:translateY(-3px)}
 .hino-icon{font-size:2rem}
 .hino-title{font-weight:600;font-size:0.9rem}
 .hino-type{font-size:0.7rem;color:var(--gray)}
+.hino-badge{font-size:0.6rem;padding:2px 8px;border-radius:100px;font-weight:700;margin-top:4px}
+.hino-badge.file{background:rgba(0,200,83,0.2);color:var(--green)}
+.hino-badge.link{background:rgba(255,107,0,0.2);color:var(--primary)}
+.hino-del{font-size:0.65rem;color:var(--red);margin-top:5px;background:none;border:none;cursor:pointer}
 .hino-add{background:rgba(255,107,0,0.1);border:1px dashed var(--primary);border-radius:12px;padding:20px;text-align:center;cursor:pointer;color:var(--primary);font-weight:600;font-size:0.85rem;display:flex;flex-direction:column;align-items:center;gap:8px;transition:0.3s}
 .hino-add:hover{background:rgba(255,107,0,0.2)}
-.hino-del{font-size:0.65rem;color:var(--red);margin-top:5px;background:none;border:none;cursor:pointer}
+.hino-choice{display:none;flex-direction:column;gap:10px;margin-top:10px}
+.hino-choice button{padding:10px;border-radius:8px;border:1px solid var(--gray-light);background:var(--dark-card);color:var(--white);cursor:pointer;font-size:0.85rem;transition:0.3s}
+.hino-choice button:hover{border-color:var(--primary)}
+.video-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:2000;align-items:center;justify-content:center;flex-direction:column}
+.video-modal.active{display:flex}
+.video-modal video{max-width:90%;max-height:80vh;border-radius:12px}
+.video-modal-close{position:fixed;top:20px;right:20px;background:var(--red);color:white;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;z-index:2001}
+.video-modal-title{color:var(--white);font-size:1rem;margin-bottom:15px;font-weight:600}
 </style>
 </head>
 <body>
@@ -179,6 +190,12 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 </section>
 </div>
 </div>
+<div class="video-modal" id="videoModal">
+<button class="video-modal-close" onclick="closeVideoModal()">✕</button>
+<div class="video-modal-title" id="videoModalTitle"></div>
+<video id="videoPlayer" controls autoplay></video>
+</div>
+<input type="file" id="fileInput" accept="video/*" style="display:none">
 <script>
 var PASSWORD='midia2026';
 var members=['Sara','Letícia','Gabriela','Kauane','Eva'];
@@ -211,6 +228,48 @@ var artOffset=0;
 var scaleOffset=0;
 var postDone=[false,false,false,false,false,false,false];
 var bgIcons=['📷','📱','📸','🎥','🎬','📹','📽️','📱','📷','📸'];
+var db=null;
+
+function initDb(){
+var request=indexedDB.open('MidiabgDB',1);
+request.onupgradeneeded=function(e){
+db=e.target.result;
+if(!db.objectStoreNames.contains('videos')){
+db.createObjectStore('videos',{keyPath:'id'});
+}
+};
+request.onsuccess=function(e){db=e.target.result;};
+request.onerror=function(e){console.log('Erro DB:'+e.target.error);};
+}
+
+function saveVideoToDb(id,blob,callback){
+if(!db){callback(false);return;}
+var tx=db.transaction(['videos'],'readwrite');
+var store=tx.objectStore('videos');
+var req=store.put({id:id,blob:blob});
+req.onsuccess=function(){callback(true);};
+req.onerror=function(){callback(false);};
+}
+
+function getVideoFromDb(id,callback){
+if(!db){callback(null);return;}
+var tx=db.transaction(['videos'],'readonly');
+var store=tx.objectStore('videos');
+var req=store.get(id);
+req.onsuccess=function(e){
+if(e.target.result){callback(e.target.result.blob);}else{callback(null);}
+};
+req.onerror=function(){callback(null);};
+}
+
+function deleteVideoFromDb(id,callback){
+if(!db){callback();return;}
+var tx=db.transaction(['videos'],'readwrite');
+var store=tx.objectStore('videos');
+store.delete(id);
+tx.oncomplete=function(){callback();};
+}
+
 function initBgIcons(){
 var container=document.getElementById('bgIcons');
 var html='';
@@ -225,6 +284,7 @@ html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animatio
 }
 container.innerHTML=html;
 }
+
 function getWeekNumber(d){
 var date=new Date(d);
 date.setHours(0,0,0,0);
@@ -343,6 +403,7 @@ var count=0;
 for(var i=0;i<postDone.length;i++){if(postDone[i])count++;}
 document.getElementById('post-stats').textContent=count+' de 7 concluídos';
 }
+
 function initHinos(){
 var saved=JSON.parse(localStorage.getItem('hinos')||'[]');
 renderHinos(saved);
@@ -353,12 +414,18 @@ document.getElementById('hino-count').textContent=hinos.length+' hinos';
 var html='';
 for(var i=0;i<hinos.length;i++){
 var h=hinos[i];
-html+='<a href="'+h.link+'" target="_blank" class="hino-card"><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div><button class="hino-del" onclick="event.preventDefault();removeHino('+i+')">Excluir</button></a>';
+var badge=h.kind==='file'?'<span class="hino-badge file">📂 Arquivo</span>':'<span class="hino-badge link">🔗 Link</span>';
+var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';
+html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';
 }
-html+='<div class="hino-add" onclick="addHino()"><div style="font-size:2rem">➕</div><div>Adicionar Hino</div></div>';
+html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">➕</div><div>Adicionar Hino</div></div>';
 container.innerHTML=html;
 }
-function addHino(){
+function showHinoChoice(){
+var choice=confirm('Clique em OK para fazer UPLOAD de arquivo de vídeo\nou em CANCELAR para usar link do Google Drive.');
+if(choice){
+document.getElementById('fileInput').click();
+}else{
 var name=prompt('Nome do hino:');
 if(!name)return;
 var link=prompt('Cole o link do Google Drive:');
@@ -366,16 +433,71 @@ if(!link)return;
 var type=prompt('Tipo:','Vídeo com letra');
 if(!type)type='Vídeo com letra';
 var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
-hinos.unshift({name:name,link:link,type:type,icon:'🎵'});
+hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});
 localStorage.setItem('hinos',JSON.stringify(hinos));
 renderHinos(hinos);
 }
+}
+document.getElementById('fileInput').addEventListener('change',function(e){
+var file=e.target.files[0];
+if(!file)return;
+var name=prompt('Nome do hino:','');
+if(!name){e.target.value='';return;}
+var type=prompt('Tipo:','Vídeo com letra');
+if(!type)type='Vídeo com letra';
+var hinoId='hino_'+Date.now();
+var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
+hinos.unshift({name:name,type:type,icon:'🎵',kind:'file',hinoId:hinoId});
+localStorage.setItem('hinos',JSON.stringify(hinos));
+saveVideoToDb(hinoId,file,function(ok){
+if(ok){alert('Vídeo "'+name+'" salvo com sucesso!');}
+else{alert('Erro ao salvar. Tente um arquivo menor.');}
+renderHinos(hinos);
+});
+e.target.value='';
+});
+function playHinoFile(i){
+var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
+var h=hinos[i];
+document.getElementById('videoModalTitle').textContent='▶ '+h.name;
+var modal=document.getElementById('videoModal');
+modal.classList.add('active');
+getVideoFromDb(h.hinoId,function(blob){
+if(blob){
+var url=URL.createObjectURL(blob);
+document.getElementById('videoPlayer').src=url;
+}else{
+alert('Arquivo não encontrado. Pode ter sido removido.');
+closeVideoModal();
+}
+});
+}
+function playHinoLink(i){
+var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
+var h=hinos[i];
+window.open(h.link,'_blank');
+}
+function closeVideoModal(){
+document.getElementById('videoModal').classList.remove('active');
+var vp=document.getElementById('videoPlayer');
+vp.pause();
+vp.src='';
+}
+document.addEventListener('keydown',function(e){
+if(e.key==='Escape'){closeVideoModal();}
+});
+
 function removeHino(i){
 var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
+var h=hinos[i];
+if(h.kind==='file'&&h.hinoId){
+deleteVideoFromDb(h.hinoId,function(){});
+}
 hinos.splice(i,1);
 localStorage.setItem('hinos',JSON.stringify(hinos));
 renderHinos(hinos);
 }
+
 function initRanking(){
 var container=document.getElementById('ranking-list');
 var ranking=[];
@@ -432,6 +554,7 @@ initHinos();
 initRanking();
 initNotices();
 }
+initDb();
 initBgIcons();
 </script>
 </body>
