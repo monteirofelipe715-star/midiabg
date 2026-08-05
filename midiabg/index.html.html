@@ -257,7 +257,7 @@ var member=members[i];
 if(member===artPerson){
 html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">🎨 Arte de Domingo</div><div class="role-detail">Responsável pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
 }else{
-var r=roles[roleIdx%roles.length];
+var r=roles[(roleIdx+scaleOffset)%roles.length];
 roleIdx++;
 html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--white);font-size:0.9rem">'+r.name+'</div><div class="role-detail">'+r.detail+'</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
 }
