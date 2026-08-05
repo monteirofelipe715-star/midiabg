@@ -85,30 +85,14 @@ function renderScale() {
     const artOffset = getWeekOffset();
     const artPerson = members[artOffset];
     let html = '';
+    let roleIdx = 0;
     members.forEach((member, i) => {
         if (member === artPerson) {
-            html += `<div class="scale-row">
-                <span style="font-weight:600">${member}</span>
-                <div><div style="color:var(--green); font-size:0.9rem">🎨 Arte de Domingo</div>
-                <div class="role-detail">Responsável pela arte da semana</div></div>
-                <span class="status-badge bg-ok">Confirmado</span>
-            </div>`;
+            html += '<div class="scale-row"><span style="font-weight:600">' + member + '</span><div><div style="color:var(--green); font-size:0.9rem">🎨 Arte de Domingo</div><div class="role-detail">Responsável pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
         } else {
-            let roleIdx = 0;
-            for (let j = 0; j &lt; members.length; j++) {
-                const idx = (j + scaleOffset) % roles.length;
-                if (members[j] !== artPerson) {
-                    if (members[j] === member) { roleIdx = idx; break; }
-                    roleIdx = (roleIdx + 1) % roles.length;
-                }
-            }
-            roleIdx = roleIdx % roles.length;
-            html += `<div class="scale-row">
-                <span style="font-weight:600">${member}</span>
-                <div><div style="color:var(--white); font-size:0.9rem">${roles[roleIdx].name}</div>
-                <div class="role-detail">${roles[roleIdx].detail}</div></div>
-                <span class="status-badge bg-ok">Confirmado</span>
-            </div>`;
+            const r = roles[roleIdx % roles.length];
+            roleIdx++;
+            html += '<div class="scale-row"><span style="font-weight:600">' + member + '</span><div><div style="color:var(--white); font-size:0.9rem">' + r.name + '</div><div class="role-detail">' + r.detail + '</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
         }
     });
     container.innerHTML = html;
@@ -120,15 +104,7 @@ function initPresence() {
     const container = document.getElementById('presence-list');
     let html = '';
     members.forEach((member, i) => {
-        html += `<div class="presence-item">
-            <div style="display:flex; justify-content:space-between; align-items:center">
-                <span style="font-weight:600">${member}</span>
-                <input type="checkbox" id="pres-${i}" onchange="updatePresence()" style="width:20px; height:20px; cursor:pointer">
-            </div>
-            <div class="absent-fields" id="absent-${i}">
-                <input type="text" class="login-input" style="margin:0; font-size:0.8rem" placeholder="Motivo da falta...">
-            </div>
-        </div>`;
+        html += '<div class="presence-item"><div style="display:flex; justify-content:space-between; align-items:center"><span style="font-weight:600">' + member + '</span><input type="checkbox" id="pres-' + i + '" onchange="updatePresence()" style="width:20px; height:20px; cursor:pointer"></div><div class="absent-fields" id="absent-' + i + '"><input type="text" class="login-input" style="margin:0; font-size:0.8rem" placeholder="Motivo da falta..."></div></div>';
     });
     container.innerHTML = html;
 }
@@ -148,11 +124,7 @@ function initCalendar() {
     const container = document.getElementById('cal-grid');
     let html = '';
     postTypes.forEach((post, i) => {
-        html += `<div class="cal-day" id="cal-${i}" onclick="togglePost(${i})">
-            <div style="font-weight:700; font-size:0.9rem">${post.day}</div>
-            <div class="type" style="color:var(--gray); font-size:0.8rem; margin-top:5px">${post.type}</div>
-            <div style="margin-top:8px; font-size:0.7rem; color:var(--gray)">Clique para marcar</div>
-        </div>`;
+        html += '<div class="cal-day" id="cal-' + i + '" onclick="togglePost(' + i + ')"><div style="font-weight:700; font-size:0.9rem">' + post.day + '</div><div class="type" style="color:var(--gray); font-size:0.8rem; margin-top:5px">' + post.type + '</div><div style="margin-top:8px; font-size:0.7rem; color:var(--gray)">Clique para marcar</div></div>';
     });
     container.innerHTML = html;
     updatePostStats();
@@ -177,10 +149,7 @@ function initRanking() {
     ranking.forEach((item, i) => {
         const cls = i === 0 ? 'ranking-item top-rank' : 'ranking-item';
         const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + 'º';
-        html += `<div class="${cls}">
-            <span>${medal} <strong>${item.name}</strong></span>
-            <span style="color:var(--primary); font-weight:700">${item.posts} posts</span>
-        </div>`;
+        html += '<div class="' + cls + '"><span>' + medal + ' <strong>' + item.name + '</strong></span><span style="color:var(--primary); font-weight:700">' + item.posts + ' posts</span></div>';
     });
     container.innerHTML = html;
 }
@@ -193,7 +162,7 @@ function addNotice() {
     const text = document.getElementById('notice-text').value.trim();
     if (!text) return;
     const notices = JSON.parse(localStorage.getItem('notices') || '[]');
-    notices.unshift({ text, date: new Date().toLocaleDateString('pt-BR') });
+    notices.unshift({ text: text, date: new Date().toLocaleDateString('pt-BR') });
     localStorage.setItem('notices', JSON.stringify(notices));
     document.getElementById('notice-text').value = '';
     renderNotices(notices);
@@ -203,10 +172,7 @@ function renderNotices(notices) {
     if (notices.length === 0) { container.innerHTML = '<p style="color:var(--gray); font-size:0.9rem">Nenhum aviso ainda.</p>'; return; }
     let html = '';
     notices.forEach((n, i) => {
-        html += `<div class="notice-item">
-            <div><strong>${n.text}</strong><br><small style="color:var(--gray)">${n.date}</small></div>
-            <button class="btn-action" onclick="removeNotice(${i})" style="color:var(--red)">Excluir</button>
-        </div>`;
+        html += '<div class="notice-item"><div><strong>' + n.text + '</strong><br><small style="color:var(--gray)">' + n.date + '</small></div><button class="btn-action" onclick="removeNotice(' + i + ')" style="color:var(--red)">Excluir</button></div>';
     });
     container.innerHTML = html;
 }
