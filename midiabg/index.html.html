@@ -1,380 +1,366 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Mídia | AD Madureira BG</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #FF6B00; --primary-dark: #E55A00;
-            --dark: #0A0A0A; --dark-soft: #1A1A1A; --dark-card: #1F1F1F;
-            --gray: #8B8B8B; --gray-light: #2A2A2A; --white: #FFFFFF;
-            --green: #00C853; --red: #FF3B30; --yellow: #FFB300;
-        }
-        body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--white); line-height: 1.6; overflow-x: hidden; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-        #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 30%, rgba(255,107,0,0.08) 0%, transparent 60%), var(--dark); }
-        .login-box { background: var(--dark-soft); border: 1px solid var(--gray-light); border-radius: 20px; padding: 40px; max-width: 400px; width: 90%; text-align: center; }
-        .login-logo { width: 100px; height: 100px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary); }
-        .login-logo img { width: 100%; height: 100%; object-fit: cover; }
-        .login-input { width: 100%; background: var(--dark); border: 1px solid var(--gray-light); border-radius: 10px; padding: 12px; color: var(--white); margin-bottom: 15px; outline: none; }
-        .login-btn { width: 100%; background: var(--primary); color: var(--white); border: none; border-radius: 10px; padding: 12px; font-weight: 700; cursor: pointer; }
-        #portal { display: none; }
-        header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--gray-light); }
-        .nav { display: flex; justify-content: space-between; align-items: center; height: 70px; }
-        .nav-brand { display: flex; align-items: center; gap: 10px; }
-        .nav-logo { width: 35px; height: 35px; border-radius: 50%; overflow: hidden; border: 1px solid var(--primary); }
-        .nav-links { display: flex; gap: 5px; align-items: center; overflow-x: auto; }
-        .nav-links a, .nav-links button { color: var(--gray); text-decoration: none; font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; background: none; border: none; cursor: pointer; white-space: nowrap; }
-        .nav-links a:hover, .nav-links button:hover { color: var(--white); background: var(--gray-light); }
-        .btn-drive { background: rgba(255,107,0,0.1) !important; color: var(--primary) !important; font-weight: 700; }
-        section { padding: 40px 0; border-bottom: 1px solid var(--gray-light); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .card { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 14px; padding: 20px; transition: 0.3s; }
-        .card:hover { border-color: var(--primary); }
-        .motivation-box { background: linear-gradient(135deg, rgba(255,107,0,0.1), rgba(255,107,0,0.02)); border: 1px solid rgba(255,107,0,0.3); border-radius: 14px; padding: 30px; text-align: center; margin-bottom: 10px; }
-        .motivation-text { font-size: 1.15rem; font-style: italic; color: var(--white); line-height: 1.6; }
-        .motivation-author { font-size: 0.8rem; color: var(--primary); margin-top: 10px; font-weight: 600; }
-        .week-responsible { background: linear-gradient(135deg, rgba(255,107,0,0.15), rgba(255,107,0,0.03)); border: 1px solid var(--primary); border-radius: 14px; padding: 25px; text-align: center; }
-        .week-label { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; }
-        .week-name { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 8px 0; }
-        .week-role { font-size: 0.85rem; color: var(--white); }
-        .art-responsible { background: linear-gradient(135deg, rgba(0,200,83,0.1), rgba(0,200,83,0.02)); border: 1px solid rgba(0,200,83,0.3); border-radius: 14px; padding: 25px; text-align: center; margin-top: 15px; }
-        .art-label { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; }
-        .art-name { font-size: 1.4rem; font-weight: 700; color: var(--green); margin: 8px 0; }
-        .scale-row { display: grid; grid-template-columns: 1fr 2fr 100px; padding: 15px; border-bottom: 1px solid var(--gray-light); align-items: center; gap: 10px; }
-        .role-detail { font-size: 0.75rem; color: var(--gray); margin-top: 3px; }
-        .btn-action { background: var(--gray-light); border: none; color: var(--white); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
-        .btn-rotate { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
-        .presence-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .presence-item { display: flex; flex-direction: column; gap: 10px; }
-        .absent-fields { display: none; margin-top: 5px; }
-        .ranking-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 5px; border-radius: 8px; }
-        .top-rank { background: rgba(255,107,0,0.15); border: 1px solid var(--primary); }
-        .cal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        .cal-day { background: var(--dark-card); border: 1px solid var(--gray-light); border-radius: 10px; padding: 15px; cursor: pointer; transition: 0.3s; }
-        .cal-day:hover { border-color: var(--primary); }
-        .cal-day.done { border-color: var(--green); background: rgba(0,200,83,0.05); }
-        .cal-day.done .type { color: var(--green); }
-        .notice-input { display: flex; gap: 10px; margin-bottom: 20px; }
-        .notice-item { background: var(--gray-light); padding: 10px 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .status-badge { padding: 4px 8px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; }
-        .bg-ok { background: rgba(0,200,83,0.2); color: var(--green); }
-        .bg-warn { background: rgba(255,179,0,0.2); color: var(--yellow); }
-        .bg-error { background: rgba(255,59,48,0.2); color: var(--red); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Mídia | AD Madureira BG</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#FF6B00;--primary-dark:#E55A00;--dark:#0A0A0A;--dark-soft:#1A1A1A;--dark-card:#1F1F1F;--gray:#8B8B8B;--gray-light:#2A2A2A;--white:#FFFFFF;--green:#00C853;--red:#FF3B30;--yellow:#FFB300}
+body{font-family:'Inter',sans-serif;background:var(--dark);color:var(--white);line-height:1.6;overflow-x:hidden}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,rgba(255,107,0,0.08) 0%,transparent 60%),var(--dark)}
+.login-box{background:var(--dark-soft);border:1px solid var(--gray-light);border-radius:20px;padding:40px;max-width:400px;width:90%;text-align:center}
+.login-logo{width:100px;height:100px;margin:0 auto 20px;border-radius:50%;overflow:hidden;border:2px solid var(--primary)}
+.login-logo img{width:100%;height:100%;object-fit:cover}
+.login-input{width:100%;background:var(--dark);border:1px solid var(--gray-light);border-radius:10px;padding:12px;color:var(--white);margin-bottom:15px;outline:none}
+.login-btn{width:100%;background:var(--primary);color:var(--white);border:none;border-radius:10px;padding:12px;font-weight:700;cursor:pointer}
+#portal{display:none}
+header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--gray-light)}
+.nav{display:flex;justify-content:space-between;align-items:center;height:70px}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:35px;height:35px;border-radius:50%;overflow:hidden;border:1px solid var(--primary)}
+.nav-links{display:flex;gap:5px;align-items:center;overflow-x:auto}
+.nav-links a,.nav-links button{color:var(--gray);text-decoration:none;font-size:0.8rem;padding:8px 12px;border-radius:8px;background:none;border:none;cursor:pointer;white-space:nowrap}
+.nav-links a:hover,.nav-links button:hover{color:var(--white);background:var(--gray-light)}
+.btn-drive{background:rgba(255,107,0,0.1)!important;color:var(--primary)!important;font-weight:700}
+section{padding:40px 0;border-bottom:1px solid var(--gray-light)}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:14px;padding:20px;transition:0.3s}
+.card:hover{border-color:var(--primary)}
+.motivation-box{background:linear-gradient(135deg,rgba(255,107,0,0.1),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.3);border-radius:14px;padding:30px;text-align:center;margin-bottom:10px}
+.motivation-text{font-size:1.15rem;font-style:italic;color:var(--white);line-height:1.6}
+.motivation-author{font-size:0.8rem;color:var(--primary);margin-top:10px;font-weight:600}
+.week-responsible{background:linear-gradient(135deg,rgba(255,107,0,0.15),rgba(255,107,0,0.03));border:1px solid var(--primary);border-radius:14px;padding:25px;text-align:center}
+.week-label{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em}
+.week-name{font-size:1.8rem;font-weight:800;color:var(--primary);margin:8px 0}
+.week-role{font-size:0.85rem;color:var(--white)}
+.art-responsible{background:linear-gradient(135deg,rgba(0,200,83,0.1),rgba(0,200,83,0.02));border:1px solid rgba(0,200,83,0.3);border-radius:14px;padding:25px;text-align:center;margin-top:15px}
+.art-label{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em}
+.art-name{font-size:1.4rem;font-weight:700;color:var(--green);margin:8px 0}
+.scale-row{display:grid;grid-template-columns:1fr 2fr 100px;padding:15px;border-bottom:1px solid var(--gray-light);align-items:center;gap:10px}
+.role-detail{font-size:0.75rem;color:var(--gray);margin-top:3px}
+.btn-action{background:var(--gray-light);border:none;color:var(--white);padding:6px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer}
+.btn-rotate{background:var(--primary);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.btn-green{background:var(--green);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.presence-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.presence-item{display:flex;flex-direction:column;gap:10px}
+.absent-fields{display:none;margin-top:5px}
+.ranking-item{display:flex;justify-content:space-between;align-items:center;padding:10px;margin-bottom:5px;border-radius:8px}
+.top-rank{background:rgba(255,107,0,0.15);border:1px solid var(--primary)}
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.cal-day{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:10px;padding:15px;cursor:pointer;transition:0.3s}
+.cal-day:hover{border-color:var(--primary)}
+.cal-day.done{border-color:var(--green);background:rgba(0,200,83,0.05)}
+.cal-day.done .type{color:var(--green)}
+.notice-input{display:flex;gap:10px;margin-bottom:20px}
+.notice-item{background:var(--gray-light);padding:10px 15px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between}
+.status-badge{padding:4px 8px;border-radius:100px;font-size:0.7rem;font-weight:700}
+.bg-ok{background:rgba(0,200,83,0.2);color:var(--green)}
+.bg-warn{background:rgba(255,179,0,0.2);color:var(--yellow)}
+.bg-error{background:rgba(255,59,48,0.2);color:var(--red)}
+</style>
 </head>
 <body>
-
 <div id="login-screen">
-    <div class="login-box">
-        <div class="login-logo"><img src="logo-midia.png" alt="Logo"></div>
-        <h2>Portal Mídia</h2>
-        <p style="color:var(--gray); font-size:0.8rem; margin-bottom:20px">Acesso Restrito</p>
-        <input type="password" id="pass" class="login-input" placeholder="Senha da Equipe">
-        <button class="login-btn" onclick="login()">Entrar</button>
-    </div>
+<div class="login-box">
+<div class="login-logo"><img src="logo-midia.png" alt="Logo"></div>
+<h2>Portal Mídia</h2>
+<p style="color:var(--gray);font-size:0.8rem;margin-bottom:20px">Acesso Restrito</p>
+<input type="password" id="pass" class="login-input" placeholder="Senha da Equipe">
+<button class="login-btn" onclick="login()">Entrar</button>
 </div>
-
+</div>
 <div id="portal">
-    <header>
-        <div class="container nav">
-            <div class="nav-brand">
-                <div class="nav-logo"><img src="logo-midia.png" width="100%"></div>
-                <span style="font-weight:700">MÍDIA <span style="color:var(--primary)">ADMBG</span></span>
-            </div>
-            <div class="nav-links">
-                <a href="#escala">Escala</a>
-                <a href="#presenca">Presença</a>
-                <a href="#calendario">Posts</a>
-                <a href="#ranking">Ranking</a>
-                <a href="#avisos">Avisos</a>
-                <a href="https://drive.google.com" target="_blank" class="btn-drive">📁 Drive</a>
-                <button onclick="logout()" style="color:var(--red)">Sair</button>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <section style="text-align:center">
-            <h1 style="font-size:2rem">Olá, <span style="color:var(--primary)">Equipe!</span></h1>
-            <p style="color:var(--gray)">Sara • Letícia • Gabriela • Kauane • Eva</p>
-            <div style="margin-top:15px; font-size:0.9rem; font-weight:600">⛪ Próximo Culto: Domingo 19h00 (Sede)</div>
-        </section>
-
-        <section>
-            <div class="motivation-box">
-                <div class="motivation-text" id="motivation-text">Carregando...</div>
-                <div class="motivation-author" id="motivation-author"></div>
-            </div>
-        </section>
-
-        <section>
-            <div class="week-responsible">
-                <div class="week-label">⭐ Responsável da Semana</div>
-                <div class="week-name" id="week-name">—</div>
-                <div class="week-role" id="week-role">—</div>
-            </div>
-            <div class="art-responsible">
-                <div class="art-label">🎨 Responsável pela Arte de Domingo</div>
-                <div class="art-name" id="art-name">—</div>
-                <div style="font-size:0.8rem; color:var(--gray)">Atualizado toda segunda-feira</div>
-            </div>
-        </section>
-
-        <section id="escala">
-            <div class="section-header">
-                <h2>📅 Escala de Domingo</h2>
-                <button class="btn-rotate" onclick="rotateScale()">🔄 Gerar Nova Escala</button>
-            </div>
-            <div class="card" id="scale-container"></div>
-            <p id="last-update" style="font-size:0.7rem; color:var(--gray); margin-top:10px"></p>
-        </section>
-
-        <section id="presenca">
-            <div class="section-header">
-                <h2>📋 Presença do Culto</h2>
-                <span id="presence-count" style="color:var(--primary); font-weight:700">0 de 5 presentes</span>
-            </div>
-            <div class="card presence-list" id="presence-list"></div>
-            <button class="btn-rotate" style="margin-top:20px; width:100%" onclick="savePresence()">Salvar Presença</button>
-        </section>
-
-        <section id="calendario">
-            <div class="section-header">
-                <h2>📱 Calendário de Posts</h2>
-                <span id="post-stats" style="font-size:0.9rem">0 de 7 concluídos</span>
-            </div>
-            <div class="cal-grid" id="cal-grid"></div>
-        </section>
-
-        <section id="ranking">
-            <div class="section-header"><h2>🏆 Ranking de Postagens</h2></div>
-            <div class="card" id="ranking-list"></div>
-        </section>
-
-        <section id="avisos">
-            <div class="section-header"><h2>📌 Avisos da Equipe</h2></div>
-            <div class="notice-input">
-                <input type="text" id="notice-text" class="login-input" style="margin:0" placeholder="Digite um aviso...">
-                <button class="btn-rotate" onclick="addNotice()">Postar</button>
-            </div>
-            <div id="notice-list"></div>
-        </section>
-
-        <section style="text-align:center; padding:30px 0">
-            <p style="color:var(--gray); font-size:0.8rem">AD Madureira • Bento Gonçalves/RS</p>
-            <p style="color:var(--gray); font-size:0.7rem; margin-top:5px">Pr. Presidente Gideon Barros</p>
-        </section>
-    </div>
+<header>
+<div class="container nav">
+<div class="nav-brand">
+<div class="nav-logo"><img src="logo-midia.png" width="100%"></div>
+<span style="font-weight:700">MÍDIA <span style="color:var(--primary)">ADMBG</span></span>
 </div>
-
+<div class="nav-links">
+<a href="#escala">Escala</a>
+<a href="#presenca">Presença</a>
+<a href="#calendario">Posts</a>
+<a href="#ranking">Ranking</a>
+<a href="#avisos">Avisos</a>
+<a href="https://drive.google.com" target="_blank" class="btn-drive">📁 Drive</a>
+<button onclick="logout()" style="color:var(--red)">Sair</button>
+</div>
+</div>
+</header>
+<div class="container">
+<section style="text-align:center">
+<h1 style="font-size:2rem">Olá, <span style="color:var(--primary)">Equipe!</span></h1>
+<p style="color:var(--gray)">Sara • Letícia • Gabriela • Kauane • Eva</p>
+<div style="margin-top:15px;font-size:0.9rem;font-weight:600">⛪ Próximo Culto: Domingo 19h00 (Sede)</div>
+</section>
+<section>
+<div class="motivation-box">
+<div class="motivation-text" id="motivation-text">Carregando...</div>
+<div class="motivation-author" id="motivation-author"></div>
+</div>
+</section>
+<section>
+<div class="week-responsible">
+<div class="week-label">⭐ Responsável da Semana</div>
+<div class="week-name" id="week-name">—</div>
+<div class="week-role" id="week-role">—</div>
+<button class="btn-rotate" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateWeekResponsible()">🔄 Alterar Responsável</button>
+</div>
+<div class="art-responsible">
+<div class="art-label">🎨 Responsável pela Arte de Domingo</div>
+<div class="art-name" id="art-name">—</div>
+<div style="font-size:0.8rem;color:var(--gray)">Atualizado toda segunda-feira</div>
+<button class="btn-green" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateArtResponsible()">🔄 Alterar Arte</button>
+</div>
+</section>
+<section id="escala">
+<div class="section-header">
+<h2>📅 Escala de Domingo</h2>
+<button class="btn-rotate" onclick="rotateScale()">🔄 Gerar Nova Escala</button>
+</div>
+<div class="card" id="scale-container"></div>
+<p id="last-update" style="font-size:0.7rem;color:var(--gray);margin-top:10px"></p>
+</section>
+<section id="presenca">
+<div class="section-header">
+<h2>📋 Presença do Culto</h2>
+<span id="presence-count" style="color:var(--primary);font-weight:700">0 de 5 presentes</span>
+</div>
+<div class="card presence-list" id="presence-list"></div>
+<button class="btn-rotate" style="margin-top:20px;width:100%" onclick="savePresence()">Salvar Presença</button>
+</section>
+<section id="calendario">
+<div class="section-header">
+<h2>📱 Calendário de Posts</h2>
+<span id="post-stats" style="font-size:0.9rem">0 de 7 concluídos</span>
+</div>
+<div class="cal-grid" id="cal-grid"></div>
+</section>
+<section id="ranking">
+<div class="section-header"><h2>🏆 Ranking de Postagens</h2></div>
+<div class="card" id="ranking-list"></div>
+</section>
+<section id="avisos">
+<div class="section-header"><h2>📌 Avisos da Equipe</h2></div>
+<div class="notice-input">
+<input type="text" id="notice-text" class="login-input" style="margin:0" placeholder="Digite um aviso...">
+<button class="btn-rotate" onclick="addNotice()">Postar</button>
+</div>
+<div id="notice-list"></div>
+</section>
+<section style="text-align:center;padding:30px 0">
+<p style="color:var(--gray);font-size:0.8rem">AD Madureira • Bento Gonçalves/RS</p>
+<p style="color:var(--gray);font-size:0.7rem;margin-top:5px">Pr. Presidente Gideon Barros</p>
+</section>
+</div>
+</div>
 <script>
-var PASSWORD = 'midia2026';
-var members = ['Sara', 'Letícia', 'Gabriela', 'Kauane', 'Eva'];
-var roles = [
-    { name: 'Projeção (Slides)', detail: 'Cuidar dos slides de letras e avisos no culto' },
-    { name: 'iPhone 1 - Fotos Verticais', detail: 'Fotos verticais para postar no Instagram' },
-    { name: 'iPhone 2 - Vídeos e Reels', detail: 'Vídeos verticais, posts e reels' },
-    { name: 'Câmera Fotográfica', detail: 'Fotos horizontais para postar depois' }
+var PASSWORD='midia2026';
+var members=['Sara','Letícia','Gabriela','Kauane','Eva'];
+var roles=[
+{name:'Projeção (Slides)',detail:'Cuidar dos slides de letras e avisos no culto'},
+{name:'iPhone 1 - Fotos Verticais',detail:'Fotos verticais para postar no Instagram'},
+{name:'iPhone 2 - Vídeos e Reels',detail:'Vídeos verticais, posts e reels'},
+{name:'Câmera Fotográfica',detail:'Fotos horizontais para postar depois'}
 ];
-var postTypes = [
-    { day: 'Seg', type: 'Versículo do dia' },
-    { day: 'Ter', type: 'Aviso de culto' },
-    { day: 'Qua', type: 'Reel de louvor' },
-    { day: 'Qui', type: 'Devocional' },
-    { day: 'Sex', type: 'Foto do culto' },
-    { day: 'Sáb', type: 'Story ao vivo' },
-    { day: 'Dom', type: 'Resumo do culto' }
+var postTypes=[
+{day:'Seg',type:'Versículo do dia'},
+{day:'Ter',type:'Aviso de culto'},
+{day:'Qua',type:'Reel de louvor'},
+{day:'Qui',type:'Devocional'},
+{day:'Sex',type:'Foto do culto'},
+{day:'Sáb',type:'Story ao vivo'},
+{day:'Dom',type:'Resumo do culto'}
 ];
-var motivations = [
-    { text: 'Tudo o que fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens.', author: 'Colossenses 3:23' },
-    { text: 'O Senhor é a minha luz e a minha salvação; a quem temerei?', author: 'Salmos 27:1' },
-    { text: 'Cada um exerça o dom que recebeu para servir aos outros.', author: '1 Pedro 4:10' },
-    { text: 'Tudo posso naquele que me fortalece.', author: 'Filipenses 4:13' },
-    { text: 'Firme o coração, pois a recompensa virá.', author: 'Hebreus 10:35' },
-    { text: 'Servi uns aos outros com o dom que cada um recebeu.', author: '1 Pedro 4:10' },
-    { text: 'O trabalho da mídia leva a Palavra a quem não pode estar presente.', author: 'Equipe ADMBG' }
+var motivations=[
+{text:'"Tudo o que fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens."',author:'Colossenses 3:23'},
+{text:'"O Senhor é a minha luz e a minha salvação; a quem temerei?"',author:'Salmos 27:1'},
+{text:'"Cada um exerça o dom que recebeu para servir aos outros."',author:'1 Pedro 4:10'},
+{text:'"Tudo posso naquele que me fortalece."',author:'Filipenses 4:13'},
+{text:'"Firme o coração, pois a recompensa virá."',author:'Hebreus 10:35'},
+{text:'"Servi uns aos outros com o dom que cada um recebeu."',author:'1 Pedro 4:10'},
+{text:'"O trabalho da mídia leva a Palavra a quem não pode estar presente."',author:'Equipe ADMBG'}
 ];
+var weekOffset=0;
+var artOffset=0;
+var scaleOffset=0;
+var postDone=[false,false,false,false,false,false,false];
 
-function getWeekNumber(d) {
-    var date = new Date(d);
-    date.setHours(0, 0, 0, 0);
-    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-    var week1 = new Date(date.getFullYear(), 0, 4);
-    return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+function getWeekNumber(d){
+var date=new Date(d);
+date.setHours(0,0,0,0);
+date.setDate(date.getDate()+3-(date.getDay()+6)%7);
+var week1=new Date(date.getFullYear(),0,4);
+return 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7);
 }
-
-function getWeekOffset() {
-    var weekNum = getWeekNumber(new Date());
-    var baseWeek = 32;
-    return ((weekNum - baseWeek) % members.length + members.length) % members.length;
+function getWeekOffset(){
+var weekNum=getWeekNumber(new Date());
+var baseWeek=32;
+return ((weekNum-baseWeek)%members.length+members.length)%members.length;
 }
-
-function initMotivation() {
-    var today = new Date();
-    var dayOfWeek = today.getDay();
-    var m = motivations[dayOfWeek % motivations.length];
-    document.getElementById('motivation-text').textContent = m.text;
-    document.getElementById('motivation-author').textContent = '— ' + m.author;
+function initMotivation(){
+var today=new Date();
+var dayOfWeek=today.getDay();
+var m=motivations[dayOfWeek%motivations.length];
+document.getElementById('motivation-text').textContent=m.text;
+document.getElementById('motivation-author').textContent='— '+m.author;
 }
-
-function initWeekResponsible() {
-    var offset = getWeekOffset();
-    var responsible = members[offset];
-    var role = roles[offset % roles.length];
-    document.getElementById('week-name').textContent = responsible;
-    document.getElementById('week-role').textContent = 'Função: ' + role.name;
+function initWeekResponsible(){
+var offset=(getWeekOffset()+weekOffset)%members.length;
+var responsible=members[offset];
+var role=roles[offset%roles.length];
+document.getElementById('week-name').textContent=responsible;
+document.getElementById('week-role').textContent='Função: '+role.name;
 }
-
-function initArtResponsible() {
-    var offset = getWeekOffset();
-    var artPerson = members[offset];
-    document.getElementById('art-name').textContent = artPerson;
+function rotateWeekResponsible(){
+weekOffset++;
+initWeekResponsible();
+initScale();
 }
-
-function login() {
-    var pass = document.getElementById('pass').value;
-    if (pass === PASSWORD) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('portal').style.display = 'block';
-        initAll();
-    } else {
-        alert('Senha incorreta!');
-    }
+function initArtResponsible(){
+var offset=(getWeekOffset()+artOffset)%members.length;
+var artPerson=members[offset];
+document.getElementById('art-name').textContent=artPerson;
 }
-
-function logout() {
-    document.getElementById('portal').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('pass').value = '';
+function rotateArtResponsible(){
+artOffset++;
+initArtResponsible();
+initScale();
 }
-
-var scaleOffset = 0;
-function initScale() { renderScale(); }
-function renderScale() {
-    var container = document.getElementById('scale-container');
-    var artOffset = getWeekOffset();
-    var artPerson = members[artOffset];
-    var html = '';
-    var roleIdx = 0;
-    for (var i = 0; i < members.length; i++) {
-        var member = members[i];
-        if (member === artPerson) {
-            html += '<div class="scale-row"><span style="font-weight:600">' + member + '</span><div><div style="color:var(--green); font-size:0.9rem">🎨 Arte de Domingo</div><div class="role-detail">Responsável pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
-        } else {
-            var r = roles[roleIdx % roles.length];
-            roleIdx++;
-            html += '<div class="scale-row"><span style="font-weight:600">' + member + '</span><div><div style="color:var(--white); font-size:0.9rem">' + r.name + '</div><div class="role-detail">' + r.detail + '</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
-        }
-    }
-    container.innerHTML = html;
-    document.getElementById('last-update').textContent = 'Última atualização: ' + new Date().toLocaleString('pt-BR');
+function login(){
+var pass=document.getElementById('pass').value;
+if(pass===PASSWORD){
+document.getElementById('login-screen').style.display='none';
+document.getElementById('portal').style.display='block';
+initAll();
+}else{
+alert('Senha incorreta!');
 }
-function rotateScale() { scaleOffset++; renderScale(); }
-
-function initPresence() {
-    var container = document.getElementById('presence-list');
-    var html = '';
-    for (var i = 0; i < members.length; i++) {
-        var member = members[i];
-        html += '<div class="presence-item"><div style="display:flex; justify-content:space-between; align-items:center"><span style="font-weight:600">' + member + '</span><input type="checkbox" id="pres-' + i + '" onchange="updatePresence()" style="width:20px; height:20px; cursor:pointer"></div><div class="absent-fields" id="absent-' + i + '"><input type="text" class="login-input" style="margin:0; font-size:0.8rem" placeholder="Motivo da falta..."></div></div>';
-    }
-    container.innerHTML = html;
 }
-function updatePresence() {
-    var count = 0;
-    for (var i = 0; i < members.length; i++) {
-        var cb = document.getElementById('pres-' + i);
-        var absent = document.getElementById('absent-' + i);
-        if (cb.checked) { count++; absent.style.display = 'none'; }
-        else { absent.style.display = 'block'; }
-    }
-    document.getElementById('presence-count').textContent = count + ' de ' + members.length + ' presentes';
+function logout(){
+document.getElementById('portal').style.display='none';
+document.getElementById('login-screen').style.display='flex';
+document.getElementById('pass').value='';
 }
-function savePresence() { alert('Presença salva com sucesso!'); }
-
-function initCalendar() {
-    var container = document.getElementById('cal-grid');
-    var html = '';
-    for (var i = 0; i < postTypes.length; i++) {
-        var post = postTypes[i];
-        html += '<div class="cal-day" id="cal-' + i + '" onclick="togglePost(' + i + ')"><div style="font-weight:700; font-size:0.9rem">' + post.day + '</div><div class="type" style="color:var(--gray); font-size:0.8rem; margin-top:5px">' + post.type + '</div><div style="margin-top:8px; font-size:0.7rem; color:var(--gray)">Clique para marcar</div></div>';
-    }
-    container.innerHTML = html;
-    updatePostStats();
+function initScale(){renderScale();}
+function renderScale(){
+var container=document.getElementById('scale-container');
+var artOffsetVal=(getWeekOffset()+artOffset)%members.length;
+var artPerson=members[artOffsetVal];
+var html='';
+var roleIdx=0;
+for(var i=0;i<members.length;i++){
+var member=members[i];
+if(member===artPerson){
+html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">🎨 Arte de Domingo</div><div class="role-detail">Responsável pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
+}else{
+var r=roles[roleIdx%roles.length];
+roleIdx++;
+html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--white);font-size:0.9rem">'+r.name+'</div><div class="role-detail">'+r.detail+'</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
 }
-var postDone = [false, false, false, false, false, false, false];
-function togglePost(i) {
-    postDone[i] = !postDone[i];
-    var el = document.getElementById('cal-' + i);
-    if (postDone[i]) { el.classList.add('done'); } else { el.classList.remove('done'); }
-    updatePostStats();
 }
-function updatePostStats() {
-    var count = 0;
-    for (var i = 0; i < postDone.length; i++) { if (postDone[i]) count++; }
-    document.getElementById('post-stats').textContent = count + ' de 7 concluídos';
+container.innerHTML=html;
+document.getElementById('last-update').textContent='Última atualização: '+new Date().toLocaleString('pt-BR');
 }
-
-function initRanking() {
-    var container = document.getElementById('ranking-list');
-    var ranking = [];
-    for (var i = 0; i < members.length; i++) {
-        ranking.push({ name: members[i], posts: Math.floor(Math.random() * 15) + 1 });
-    }
-    ranking.sort(function(a, b) { return b.posts - a.posts; });
-    var html = '';
-    for (var i = 0; i < ranking.length; i++) {
-        var item = ranking[i];
-        var cls = i === 0 ? 'ranking-item top-rank' : 'ranking-item';
-        var medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + 'º';
-        html += '<div class="' + cls + '"><span>' + medal + ' <strong>' + item.name + '</strong></span><span style="color:var(--primary); font-weight:700">' + item.posts + ' posts</span></div>';
-    }
-    container.innerHTML = html;
+function rotateScale(){scaleOffset++;renderScale();}
+function initPresence(){
+var container=document.getElementById('presence-list');
+var html='';
+for(var i=0;i<members.length;i++){
+var member=members[i];
+html+='<div class="presence-item"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">'+member+'</span><input type="checkbox" id="pres-'+i+'" onchange="updatePresence()" style="width:20px;height:20px;cursor:pointer"></div><div class="absent-fields" id="absent-'+i+'"><input type="text" class="login-input" style="margin:0;font-size:0.8rem" placeholder="Motivo da falta..."></div></div>';
 }
-
-function initNotices() {
-    var saved = JSON.parse(localStorage.getItem('notices') || '[]');
-    renderNotices(saved);
+container.innerHTML=html;
 }
-function addNotice() {
-    var text = document.getElementById('notice-text').value.trim();
-    if (!text) return;
-    var notices = JSON.parse(localStorage.getItem('notices') || '[]');
-    notices.unshift({ text: text, date: new Date().toLocaleDateString('pt-BR') });
-    localStorage.setItem('notices', JSON.stringify(notices));
-    document.getElementById('notice-text').value = '';
-    renderNotices(notices);
+function updatePresence(){
+var count=0;
+for(var i=0;i<members.length;i++){
+var cb=document.getElementById('pres-'+i);
+var absent=document.getElementById('absent-'+i);
+if(cb.checked){count++;absent.style.display='none';}
+else{absent.style.display='block';}
 }
-function renderNotices(notices) {
-    var container = document.getElementById('notice-list');
-    if (notices.length === 0) { container.innerHTML = '<p style="color:var(--gray); font-size:0.9rem">Nenhum aviso ainda.</p>'; return; }
-    var html = '';
-    for (var i = 0; i < notices.length; i++) {
-        var n = notices[i];
-        html += '<div class="notice-item"><div><strong>' + n.text + '</strong><br><small style="color:var(--gray)">' + n.date + '</small></div><button class="btn-action" onclick="removeNotice(' + i + ')" style="color:var(--red)">Excluir</button></div>';
-    }
-    container.innerHTML = html;
+document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';
 }
-function removeNotice(i) {
-    var notices = JSON.parse(localStorage.getItem('notices') || '[]');
-    notices.splice(i, 1);
-    localStorage.setItem('notices', JSON.stringify(notices));
-    renderNotices(notices);
+function savePresence(){alert('Presença salva com sucesso!');}
+function initCalendar(){
+var container=document.getElementById('cal-grid');
+var html='';
+for(var i=0;i<postTypes.length;i++){
+var post=postTypes[i];
+html+='<div class="cal-day" id="cal-'+i+'" onclick="togglePost('+i+')"><div style="font-weight:700;font-size:0.9rem">'+post.day+'</div><div class="type" style="color:var(--gray);font-size:0.8rem;margin-top:5px">'+post.type+'</div><div style="margin-top:8px;font-size:0.7rem;color:var(--gray)">Clique para marcar</div></div>';
 }
-
-function initAll() {
-    initMotivation();
-    initWeekResponsible();
-    initArtResponsible();
-    initScale();
-    initPresence();
-    initCalendar();
-    initRanking();
-    initNotices();
+container.innerHTML=html;
+updatePostStats();
+}
+function togglePost(i){
+postDone[i]=!postDone[i];
+var el=document.getElementById('cal-'+i);
+if(postDone[i]){el.classList.add('done');}else{el.classList.remove('done');}
+updatePostStats();
+}
+function updatePostStats(){
+var count=0;
+for(var i=0;i<postDone.length;i++){if(postDone[i])count++;}
+document.getElementById('post-stats').textContent=count+' de 7 concluídos';
+}
+function initRanking(){
+var container=document.getElementById('ranking-list');
+var ranking=[];
+for(var i=0;i<members.length;i++){
+ranking.push({name:members[i],posts:Math.floor(Math.random()*15)+1});
+}
+ranking.sort(function(a,b){return b.posts-a.posts;});
+var html='';
+for(var i=0;i<ranking.length;i++){
+var item=ranking[i];
+var cls=i===0?'ranking-item top-rank':'ranking-item';
+var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'º';
+html+='<div class="'+cls+'"><span>'+medal+' <strong>'+item.name+'</strong></span><span style="color:var(--primary);font-weight:700">'+item.posts+' posts</span></div>';
+}
+container.innerHTML=html;
+}
+function initNotices(){
+var saved=JSON.parse(localStorage.getItem('notices')||'[]');
+renderNotices(saved);
+}
+function addNotice(){
+var text=document.getElementById('notice-text').value.trim();
+if(!text)return;
+var notices=JSON.parse(localStorage.getItem('notices')||'[]');
+notices.unshift({text:text,date:new Date().toLocaleDateString('pt-BR')});
+localStorage.setItem('notices',JSON.stringify(notices));
+document.getElementById('notice-text').value='';
+renderNotices(notices);
+}
+function renderNotices(notices){
+var container=document.getElementById('notice-list');
+if(notices.length===0){container.innerHTML='<p style="color:var(--gray);font-size:0.9rem">Nenhum aviso ainda.</p>';return;}
+var html='';
+for(var i=0;i<notices.length;i++){
+var n=notices[i];
+html+='<div class="notice-item"><div><strong>'+n.text+'</strong><br><small style="color:var(--gray)">'+n.date+'</small></div><button class="btn-action" onclick="removeNotice('+i+')" style="color:var(--red)">Excluir</button></div>';
+}
+container.innerHTML=html;
+}
+function removeNotice(i){
+var notices=JSON.parse(localStorage.getItem('notices')||'[]');
+notices.splice(i,1);
+localStorage.setItem('notices',JSON.stringify(notices));
+renderNotices(notices);
+}
+function initAll(){
+initMotivation();
+initWeekResponsible();
+initArtResponsible();
+initScale();
+initPresence();
+initCalendar();
+initRanking();
+initNotices();
 }
 </script>
 </body>
