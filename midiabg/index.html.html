@@ -36,6 +36,20 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .motivation-box{background:linear-gradient(135deg,rgba(255,107,0,0.1),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.3);border-radius:14px;padding:30px;text-align:center;margin-bottom:10px}
 .motivation-text{font-size:1.15rem;font-style:italic;color:var(--white);line-height:1.6}
 .motivation-author{font-size:0.8rem;color:var(--primary);margin-top:10px;font-weight:600}
+.bday-section{background:linear-gradient(135deg,rgba(255,107,0,0.08),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.2);border-radius:14px;padding:25px;margin-bottom:10px}
+.bday-title{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:15px;text-align:center}
+.bday-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.bday-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:10px;padding:15px;text-align:center;transition:0.3s}
+.bday-card.current{border-color:var(--primary);background:rgba(255,107,0,0.08)}
+.bday-card.today{border-color:var(--green);background:rgba(0,200,83,0.1);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,200,83,0.3)}70%{box-shadow:0 0 0 10px rgba(0,200,83,0)}100%{box-shadow:0 0 0 0 rgba(0,200,83,0)}}
+.bday-name{font-weight:700;font-size:0.95rem}
+.bday-date{font-size:0.8rem;color:var(--gray);margin-top:3px}
+.bday-card.current .bday-date{color:var(--primary)}
+.bday-card.today .bday-date{color:var(--green);font-weight:700}
+.bday-badge{font-size:0.6rem;padding:2px 8px;border-radius:100px;font-weight:700;margin-top:5px;display:inline-block}
+.bday-badge.today{background:rgba(0,200,83,0.2);color:var(--green)}
+.bday-badge.month{background:rgba(255,107,0,0.2);color:var(--primary)}
 .week-responsible{background:linear-gradient(135deg,rgba(255,107,0,0.15),rgba(255,107,0,0.03));border:1px solid var(--primary);border-radius:14px;padding:25px;text-align:center}
 .week-label{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em}
 .week-name{font-size:1.8rem;font-weight:800;color:var(--primary);margin:8px 0}
@@ -138,6 +152,10 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div class="motivation-text" id="motivation-text">Carregando...</div>
 <div class="motivation-author" id="motivation-author"></div>
 </div>
+<div class="bday-section" id="bdaySection">
+<div class="bday-title">🎂 Aniversariantes da Equipe</div>
+<div class="bday-grid" id="bdayGrid"></div>
+</div>
 </section>
 <section>
 <div class="week-responsible">
@@ -221,6 +239,14 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <script>
 var PASSWORD='midia2026';
 var members=['Sara','Letícia','Gabriela','Kauane','Eva'];
+var birthdays=[
+{name:'Sara',day:15,month:3},
+{name:'Letícia',day:22,month:7},
+{name:'Gabriela',day:8,month:8},
+{name:'Kauane',day:14,month:1},
+{name:'Eva',day:30,month:5}
+];
+var monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 var roles=[
 {name:'Projeção (Slides)',detail:'Cuidar dos slides de letras e avisos no culto'},
 {name:'iPhone 1 - Fotos Verticais',detail:'Fotos verticais para postar no Instagram'},
@@ -260,10 +286,29 @@ request.onerror=function(e){console.log('Erro DB:'+e.target.error);};
 function saveVideoToDb(id,blob,callback){if(!db){callback(false);return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');var req=store.put({id:id,blob:blob});req.onsuccess=function(){callback(true);};req.onerror=function(){callback(false);};}
 function getVideoFromDb(id,callback){if(!db){callback(null);return;}var tx=db.transaction(['videos'],'readonly');var store=tx.objectStore('videos');var req=store.get(id);req.onsuccess=function(e){if(e.target.result){callback(e.target.result.blob);}else{callback(null);}};req.onerror=function(){callback(null);};}
 function deleteVideoFromDb(id,callback){if(!db){callback();return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');store.delete(id);tx.oncomplete=function(){callback();};}
-function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i<12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
+function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i&lt;12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
 function getWeekNumber(d){var date=new Date(d);date.setHours(0,0,0,0);date.setDate(date.getDate()+3-(date.getDay()+6)%7);var week1=new Date(date.getFullYear(),0,4);return 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7);}
 function getWeekOffset(){var weekNum=getWeekNumber(new Date());var baseWeek=32;return ((weekNum-baseWeek)%members.length+members.length)%members.length;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
+function initBirthdays(){
+var now=new Date();
+var currentMonth=now.getMonth();
+var currentDay=now.getDate();
+var grid=document.getElementById('bdayGrid');
+var html='';
+for(var i=0;i&lt;birthdays.length;i++){
+var b=birthdays[i];
+var isThisMonth=b.month===currentMonth;
+var isToday=isThisMonth&&b.day===currentDay;
+var cls='';
+var badge='';
+if(isToday){cls=' today';badge='<span class="bday-badge today">🎉 HOJE!</span>';}
+else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">📌 Este mês</span>';}
+var dateStr=b.day+' de '+monthNames[b.month];
+html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'</div>';
+}
+grid.innerHTML=html;
+}
 function initWeekResponsible(){var offset=(getWeekOffset()+weekOffset)%members.length;var responsible=members[offset];var role=roles[offset%roles.length];document.getElementById('week-name').textContent=responsible;document.getElementById('week-role').textContent='Função: '+role.name;}
 function rotateWeekResponsible(){weekOffset++;initWeekResponsible();initScale();}
 function initArtResponsible(){var offset=(getWeekOffset()+artOffset)%members.length;var artPerson=members[offset];document.getElementById('art-name').textContent=artPerson;}
@@ -316,49 +361,18 @@ var targetDate=new Date(parts[0],parts[1]-1,parts[2],23,59,59);
 var now=new Date();
 var diff=targetDate-now;
 if(dl.done){
-box.className='deadline-box done';
-countEl.className='deadline-count done';
-countEl.textContent='✅';
-textEl.textContent='Arte entregue!';
-dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');
-btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';
-}else if(diff<=0){
-box.className='deadline-box urgent';
-countEl.className='deadline-count urgent';
-countEl.textContent='⚠️';
-textEl.textContent='ATRASADO!';
-dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');
-btnDone.style.display='block';btnDone.textContent='⚠️ Entregar Agora';
-btnReset.style.display='inline-block';inputRow.style.display='none';
+box.className='deadline-box done';countEl.className='deadline-count done';countEl.textContent='✅';textEl.textContent='Arte entregue!';dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';
+}else if(diff&lt;=0){
+box.className='deadline-box urgent';countEl.className='deadline-count urgent';countEl.textContent='⚠️';textEl.textContent='ATRASADO!';dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');btnDone.style.display='block';btnDone.textContent='⚠️ Entregar Agora';btnReset.style.display='inline-block';inputRow.style.display='none';
 }else{
-var days=Math.floor(diff/86400000);
-var hours=Math.floor((diff%86400000)/3600000);
-box.className='deadline-box';countEl.className='deadline-count';
-if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}
-countEl.textContent=days;
-if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}
-if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}
-dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';
-btnDone.style.display='block';btnDone.textContent='✅ Concluído';
-btnReset.style.display='inline-block';inputRow.style.display='none';
+var days=Math.floor(diff/86400000);var hours=Math.floor((diff%86400000)/3600000);box.className='deadline-box';countEl.className='deadline-count';if(days&lt;=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}countEl.textContent=days;if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}if(hours>0&&days&lt;2){textEl.textContent+=' e '+hours+'h';}dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';btnDone.style.display='block';btnDone.textContent='✅ Concluído';btnReset.style.display='inline-block';inputRow.style.display='none';
 }
 }
 function markDone(){
-var saved=JSON.parse(localStorage.getItem('deadline')||'null');
-if(!saved){return;}
-saved.done=true;
-saved.doneAt=new Date().toISOString();
-localStorage.setItem('deadline',JSON.stringify(saved));
-updateDeadline(saved);
+var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(!saved){return;}saved.done=true;saved.doneAt=new Date().toISOString();localStorage.setItem('deadline',JSON.stringify(saved));updateDeadline(saved);
 }
-function resetDeadline(){
-localStorage.removeItem('deadline');
-showDeadlineForm();
-}
-setInterval(function(){
-var saved=JSON.parse(localStorage.getItem('deadline')||'null');
-if(saved&&!saved.done){updateDeadline(saved);}
-},60000);
+function resetDeadline(){localStorage.removeItem('deadline');showDeadlineForm();}
+setInterval(function(){var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(saved&&!saved.done){updateDeadline(saved);}},60000);
 function initHinos(){var saved=JSON.parse(localStorage.getItem('hinos')||'[]');renderHinos(saved);}
 function renderHinos(hinos){var container=document.getElementById('hinos-grid');document.getElementById('hino-count').textContent=hinos.length+' hinos';var html='';for(var i=0;i<hinos.length;i++){var h=hinos[i];var badge=h.kind==='file'?'<span class="hino-badge file">📂 Arquivo</span>':'<span class="hino-badge link">🔗 Link</span>';var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';}html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">➕</div><div>Adicionar Hino</div></div>';container.innerHTML=html;}
 function showHinoChoice(){var choice=confirm('OK = UPLOAD de arquivo\nCancelar = usar link');if(choice){document.getElementById('fileInput').click();}else{var name=prompt('Nome do hino:');if(!name)return;var link=prompt('Cole o link do Google Drive:');if(!link)return;var type=prompt('Tipo:','Vídeo com letra');if(!type)type='Vídeo com letra';var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}}
@@ -372,7 +386,7 @@ function initNotices(){var saved=JSON.parse(localStorage.getItem('notices')||'[]
 function addNotice(){var text=document.getElementById('notice-text').value.trim();if(!text)return;var notices=JSON.parse(localStorage.getItem('notices')||'[]');notices.unshift({text:text,date:new Date().toLocaleDateString('pt-BR')});localStorage.setItem('notices',JSON.stringify(notices));document.getElementById('notice-text').value='';renderNotices(notices);}
 function renderNotices(notices){var container=document.getElementById('notice-list');if(notices.length===0){container.innerHTML='<p style="color:var(--gray);font-size:0.9rem">Nenhum aviso ainda.</p>';return;}var html='';for(var i=0;i<notices.length;i++){var n=notices[i];html+='<div class="notice-item"><div><strong>'+n.text+'</strong><br><small style="color:var(--gray)">'+n.date+'</small></div><button class="btn-action" onclick="removeNotice('+i+')" style="color:var(--red)">Excluir</button></div>';}container.innerHTML=html;}
 function removeNotice(i){var notices=JSON.parse(localStorage.getItem('notices')||'[]');notices.splice(i,1);localStorage.setItem('notices',JSON.stringify(notices));renderNotices(notices);}
-function initAll(){initMotivation();initWeekResponsible();initArtResponsible();initDeadline();initScale();initPresence();initCalendar();initHinos();initRanking();initNotices();}
+function initAll(){initMotivation();initBirthdays();initWeekResponsible();initArtResponsible();initDeadline();initScale();initPresence();initCalendar();initHinos();initRanking();initNotices();}
 initDb();
 initBgIcons();
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeVideoModal();}});
