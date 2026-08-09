@@ -354,20 +354,14 @@ opt.value=i;opt.textContent=i;
 sel.appendChild(opt);
 }
 }
-
-function getBirthdays(){
-return JSON.parse(localStorage.getItem('birthdays')||'[]');
-}
-function saveBirthdays(arr){
-localStorage.setItem('birthdays',JSON.stringify(arr));
-}
+function getBirthdays(){return JSON.parse(localStorage.getItem('birthdays')||'[]');}
+function saveBirthdays(arr){localStorage.setItem('birthdays',JSON.stringify(arr));}
 
 function initBirthdays(){
 initBdayDayOptions();
 renderBdayMonthTabs();
 renderBirthdays();
 }
-
 function renderBdayMonthTabs(){
 var bdays=getBirthdays();
 var now=new Date();
@@ -376,7 +370,6 @@ var container=document.getElementById('bdayMonthTabs');
 var html='<div class="bday-month-tab '+(bdayFilterMonth==='all'?'active':'')+'" onclick="setBdayFilter(\'all\',this)">Todos ('+bdays.length+')</div>';
 for(var m=0;m<12;m++){
 var count=bdays.filter(function(b){return b.month===m;}).length;
-var isCurrent=m===currentMonth;
 var cls='';
 if(bdayFilterMonth==m){cls=' active';}
 if(count>0){cls+=' has-bday';}
@@ -384,7 +377,6 @@ html+='<div class="bday-month-tab'+cls+'" onclick="setBdayFilter('+m+',this)">'+
 }
 container.innerHTML=html;
 }
-
 function setBdayFilter(month,el){
 bdayFilterMonth=month;
 var tabs=document.querySelectorAll('.bday-month-tab');
@@ -392,7 +384,6 @@ for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('active');}
 el.classList.add('active');
 renderBirthdays();
 }
-
 function renderBirthdays(){
 var bdays=getBirthdays();
 var now=new Date();
@@ -400,21 +391,13 @@ var currentMonth=now.getMonth();
 var currentDay=now.getDate();
 document.getElementById('bdayTotalCount').textContent=bdays.length+' cadastrados';
 var filtered=bdays;
-if(bdayFilterMonth!=='all'){
-filtered=bdays.filter(function(b){return b.month===bdayFilterMonth;});
-}
+if(bdayFilterMonth!=='all'){filtered=bdays.filter(function(b){return b.month===bdayFilterMonth;});}
 filtered.sort(function(a,b){
-if(bdayFilterMonth==='all'){
-if(a.month!==b.month){return a.month-b.month;}
-return a.day-b.day;
-}
+if(bdayFilterMonth==='all'){if(a.month!==b.month){return a.month-b.month;}return a.day-b.day;}
 return a.day-b.day;
 });
 var grid=document.getElementById('bdayGrid');
-if(filtered.length===0){
-grid.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum aniversariante cadastrado '+(bdayFilterMonth!=='all'?'neste mês':'')+'.</p>';
-return;
-}
+if(filtered.length===0){grid.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum aniversariante cadastrado.</p>';return;}
 var html='';
 for(var i=0;i<filtered.length;i++){
 var b=filtered[i];
@@ -429,7 +412,6 @@ html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div
 }
 grid.innerHTML=html;
 }
-
 function toggleBdayForm(){
 var form=document.getElementById('bdayForm');
 if(form.classList.contains('active')){
@@ -444,7 +426,6 @@ form.classList.add('active');
 document.getElementById('bdayNameInput').focus();
 }
 }
-
 function saveBday(){
 var name=document.getElementById('bdayNameInput').value.trim();
 var day=parseInt(document.getElementById('bdayDayInput').value);
@@ -454,14 +435,7 @@ if(!day||day<1||day>31){alert('Selecione o dia!');return;}
 if(isNaN(month)||month<0||month>11){alert('Selecione o mês!');return;}
 var bdays=getBirthdays();
 if(bdayEditId){
-for(var i=0;i<bdays.length;i++){
-if(bdays[i].id===bdayEditId){
-bdays[i].name=name;
-bdays[i].day=day;
-bdays[i].month=month;
-break;
-}
-}
+for(var i=0;i<bdays.length;i++){if(bdays[i].id===bdayEditId){bdays[i].name=name;bdays[i].day=day;bdays[i].month=month;break;}}
 }else{
 bdays.push({id:'bday_'+Date.now(),name:name,day:day,month:month});
 }
@@ -470,35 +444,27 @@ toggleBdayForm();
 renderBdayMonthTabs();
 renderBirthdays();
 }
-
 function editBday(id){
 var bdays=getBirthdays();
 var b=null;
-for(var i=0;i<bdays.length;i++){
-if(bdays[i].id===id){b=bdays[i];break;}
-}
+for(var i=0;i<bdays.length;i++){if(bdays[i].id===id){b=bdays[i];break;}}
 if(!b){return;}
 bdayEditId=id;
 document.getElementById('bdayFormTitle').textContent='Editar: '+b.name;
 document.getElementById('bdayNameInput').value=b.name;
 document.getElementById('bdayDayInput').value=b.day;
 document.getElementById('bdayMonthInput').value=b.month;
-var form=document.getElementById('bdayForm');
-form.classList.add('active');
+document.getElementById('bdayForm').classList.add('active');
 document.getElementById('bdayNameInput').focus();
 }
-
 function deleteBday(id){
 if(!confirm('Excluir este aniversariante?')){return;}
 var bdays=getBirthdays();
-for(var i=0;i<bdays.length;i++){
-if(bdays[i].id===id){bdays.splice(i,1);break;}
-}
+for(var i=0;i<bdays.length;i++){if(bdays[i].id===id){bdays.splice(i,1);break;}}
 saveBirthdays(bdays);
 renderBdayMonthTabs();
 renderBirthdays();
 }
-
 function initWeekResponsible(){var offset=(getWeekOffset()+weekOffset)%members.length;var responsible=members[offset];var role=roles[offset%roles.length];document.getElementById('week-name').textContent=responsible;document.getElementById('week-role').textContent='Função: '+role.name;}
 function rotateWeekResponsible(){weekOffset++;initWeekResponsible();initScale();}
 function initArtResponsible(){var offset=(getWeekOffset()+artOffset)%members.length;var artPerson=members[offset];document.getElementById('art-name').textContent=artPerson;}
@@ -512,7 +478,7 @@ function initPresence(){var container=document.getElementById('presence-list');v
 function updatePresence(){var count=0;for(var i=0;i<members.length;i++){var cb=document.getElementById('pres-'+i);var absent=document.getElementById('absent-'+i);if(cb.checked){count++;absent.style.display='none';}else{absent.style.display='block';}}document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';}
 function savePresence(){alert('Presença salva com sucesso!');}
 function initCalendar(){var container=document.getElementById('cal-grid');var html='';for(var i=0;i<postTypes.length;i++){var post=postTypes[i];html+='<div class="cal-day" id="cal-'+i+'" onclick="togglePost('+i+')"><div style="font-weight:700;font-size:0.9rem">'+post.day+'</div><div class="type" style="color:var(--gray);font-size:0.8rem;margin-top:5px">'+post.type+'</div><div style="margin-top:8px;font-size:0.7rem;color:var(--gray)">Clique para marcar</div></div>';}container.innerHTML=html;updatePostStats();}
-function togglePost(i){postDone[i]=!postDone[i];var el=document.getElementById('cal-'+i');if(postDone[i]){el.classList.add('done');}else{el.classList.remove('done');}updatePostStats();}
+function togglePost(i){postDone[i]=!postDone[i];var el=document.getElementById('cal-'+i);if(postDone[i]){el.classList.add('done');}else{el.classList.remove('done');}updatePostStats();}
 function updatePostStats(){var count=0;for(var i=0;i<postDone.length;i++){if(postDone[i])count++;}document.getElementById('post-stats').textContent=count+' de 7 concluídos';}
 function initDeadline(){
 var saved=JSON.parse(localStorage.getItem('deadline')||'null');
