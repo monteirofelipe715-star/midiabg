@@ -37,9 +37,15 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .motivation-text{font-size:1.15rem;font-style:italic;color:var(--white);line-height:1.6}
 .motivation-author{font-size:0.8rem;color:var(--primary);margin-top:10px;font-weight:600}
 .bday-section{background:linear-gradient(135deg,rgba(255,107,0,0.08),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.2);border-radius:14px;padding:25px;margin-bottom:10px}
-.bday-title{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:15px;text-align:center}
-.bday-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.bday-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:10px;padding:15px;text-align:center;transition:0.3s}
+.bday-title{font-size:1.1rem;font-weight:700;margin-bottom:15px;text-align:center}
+.bday-month-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:15px}
+.bday-month-tab{background:var(--dark-card);border:1px solid var(--gray-light);color:var(--gray);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;white-space:nowrap;transition:0.3s}
+.bday-month-tab:hover{border-color:var(--primary);color:var(--white)}
+.bday-month-tab.active{background:var(--primary);color:var(--white);border-color:var(--primary);font-weight:700}
+.bday-month-tab.has-bday::after{content:' ●';color:var(--primary)}
+.bday-month-tab.active.has-bday::after{color:var(--white)}
+.bday-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bday-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:10px;padding:15px;text-align:center;transition:0.3s;position:relative}
 .bday-card.current{border-color:var(--primary);background:rgba(255,107,0,0.08)}
 .bday-card.today{border-color:var(--green);background:rgba(0,200,83,0.1);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,200,83,0.3)}70%{box-shadow:0 0 0 10px rgba(0,200,83,0)}100%{box-shadow:0 0 0 0 rgba(0,200,83,0)}}
@@ -50,6 +56,22 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .bday-badge{font-size:0.6rem;padding:2px 8px;border-radius:100px;font-weight:700;margin-top:5px;display:inline-block}
 .bday-badge.today{background:rgba(0,200,83,0.2);color:var(--green)}
 .bday-badge.month{background:rgba(255,107,0,0.2);color:var(--primary)}
+.bday-actions{display:flex;gap:5px;justify-content:center;margin-top:8px}
+.bday-edit,.bday-del{font-size:0.65rem;background:none;border:none;cursor:pointer;padding:3px 8px;border-radius:5px}
+.bday-edit{color:var(--primary);background:rgba(255,107,0,0.1)}
+.bday-del{color:var(--red);background:rgba(255,59,48,0.1)}
+.bday-add-btn{background:rgba(255,107,0,0.1);border:1px dashed var(--primary);border-radius:10px;padding:15px;text-align:center;cursor:pointer;color:var(--primary);font-weight:600;font-size:0.85rem;transition:0.3s;width:100%;margin-top:12px}
+.bday-add-btn:hover{background:rgba(255,107,0,0.2)}
+.bday-form{background:var(--dark-soft);border:1px solid var(--primary);border-radius:10px;padding:20px;margin-top:12px;display:none}
+.bday-form.active{display:block}
+.bday-form input,.bday-form select{width:100%;background:var(--dark);border:1px solid var(--gray-light);border-radius:8px;padding:10px;color:var(--white);margin-bottom:10px;outline:none;font-size:0.9rem}
+.bday-form input:focus,.bday-form select:focus{border-color:var(--primary)}
+.bday-form-row{display:flex;gap:10px}
+.bday-form-row input,.bday-form-row select{flex:1}
+.bday-form-actions{display:flex;gap:10px;margin-top:5px}
+.bday-form-actions button{flex:1;padding:10px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:0.9rem}
+.bday-save{background:var(--green);color:white}
+.bday-cancel{background:var(--gray-light);color:var(--gray)}
 .week-responsible{background:linear-gradient(135deg,rgba(255,107,0,0.15),rgba(255,107,0,0.03));border:1px solid var(--primary);border-radius:14px;padding:25px;text-align:center}
 .week-label{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em}
 .week-name{font-size:1.8rem;font-weight:800;color:var(--primary);margin:8px 0}
@@ -130,6 +152,7 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <span style="font-weight:700">MÍDIA <span style="color:var(--primary)">ADMBG</span></span>
 </div>
 <div class="nav-links">
+<a href="#aniversariantes">🎂 Aniversários</a>
 <a href="#escala">Escala</a>
 <a href="#presenca">Presença</a>
 <a href="#calendario">Posts</a>
@@ -152,9 +175,44 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div class="motivation-text" id="motivation-text">Carregando...</div>
 <div class="motivation-author" id="motivation-author"></div>
 </div>
-<div class="bday-section" id="bdaySection">
-<div class="bday-title">🎂 Aniversariantes da Equipe</div>
+</section>
+<section id="aniversariantes">
+<div class="section-header">
+<h2>🎂 Aniversariantes da Igreja</h2>
+<span id="bdayTotalCount" style="font-size:0.9rem;color:var(--gray)">0 cadastrados</span>
+</div>
+<div class="bday-section">
+<div class="bday-month-tabs" id="bdayMonthTabs"></div>
 <div class="bday-grid" id="bdayGrid"></div>
+<button class="bday-add-btn" onclick="toggleBdayForm()">➕ Adicionar Aniversariante</button>
+<div class="bday-form" id="bdayForm">
+<h3 style="margin-bottom:15px;font-size:1rem" id="bdayFormTitle">Novo Aniversariante</h3>
+<input type="text" id="bdayNameInput" placeholder="Nome completo">
+<div class="bday-form-row">
+<select id="bdayDayInput">
+<option value="">Dia</option>
+</select>
+<select id="bdayMonthInput">
+<option value="">Mês</option>
+<option value="0">Janeiro</option>
+<option value="1">Fevereiro</option>
+<option value="2">Março</option>
+<option value="3">Abril</option>
+<option value="4">Maio</option>
+<option value="5">Junho</option>
+<option value="6">Julho</option>
+<option value="7">Agosto</option>
+<option value="8">Setembro</option>
+<option value="9">Outubro</option>
+<option value="10">Novembro</option>
+<option value="11">Dezembro</option>
+</select>
+</div>
+<div class="bday-form-actions">
+<button class="bday-save" onclick="saveBday()">💾 Salvar</button>
+<button class="bday-cancel" onclick="toggleBdayForm()">Cancelar</button>
+</div>
+</div>
 </div>
 </section>
 <section>
@@ -239,14 +297,8 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <script>
 var PASSWORD='midia2026';
 var members=['Sara','Letícia','Gabriela','Kauane','Eva'];
-var birthdays=[
-{name:'Sara',day:15,month:3},
-{name:'Letícia',day:22,month:7},
-{name:'Gabriela',day:8,month:8},
-{name:'Kauane',day:14,month:1},
-{name:'Eva',day:30,month:5}
-];
 var monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var monthShort=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 var roles=[
 {name:'Projeção (Slides)',detail:'Cuidar dos slides de letras e avisos no culto'},
 {name:'iPhone 1 - Fotos Verticais',detail:'Fotos verticais para postar no Instagram'},
@@ -277,6 +329,9 @@ var scaleOffset=0;
 var postDone=[false,false,false,false,false,false,false];
 var bgIcons=['📷','📱','📸','🎥','🎬','📹','📽️','📱','📷','📸'];
 var db=null;
+var bdayFilterMonth='all';
+var bdayEditId=null;
+
 function initDb(){
 var request=indexedDB.open('MidiabgDB',1);
 request.onupgradeneeded=function(e){db=e.target.result;if(!db.objectStoreNames.contains('videos')){db.createObjectStore('videos',{keyPath:'id'});}};
@@ -290,14 +345,79 @@ function initBgIcons(){var container=document.getElementById('bgIcons');var html
 function getWeekNumber(d){var date=new Date(d);date.setHours(0,0,0,0);date.setDate(date.getDate()+3-(date.getDay()+6)%7);var week1=new Date(date.getFullYear(),0,4);return 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7);}
 function getWeekOffset(){var weekNum=getWeekNumber(new Date());var baseWeek=32;return ((weekNum-baseWeek)%members.length+members.length)%members.length;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
+
+function initBdayDayOptions(){
+var sel=document.getElementById('bdayDayInput');
+for(var i=1;i<=31;i++){
+var opt=document.createElement('option');
+opt.value=i;opt.textContent=i;
+sel.appendChild(opt);
+}
+}
+
+function getBirthdays(){
+return JSON.parse(localStorage.getItem('birthdays')||'[]');
+}
+function saveBirthdays(arr){
+localStorage.setItem('birthdays',JSON.stringify(arr));
+}
+
 function initBirthdays(){
+initBdayDayOptions();
+renderBdayMonthTabs();
+renderBirthdays();
+}
+
+function renderBdayMonthTabs(){
+var bdays=getBirthdays();
+var now=new Date();
+var currentMonth=now.getMonth();
+var container=document.getElementById('bdayMonthTabs');
+var html='<div class="bday-month-tab '+(bdayFilterMonth==='all'?'active':'')+'" onclick="setBdayFilter(\'all\',this)">Todos ('+bdays.length+')</div>';
+for(var m=0;m<12;m++){
+var count=bdays.filter(function(b){return b.month===m;}).length;
+var isCurrent=m===currentMonth;
+var cls='';
+if(bdayFilterMonth==m){cls=' active';}
+if(count>0){cls+=' has-bday';}
+html+='<div class="bday-month-tab'+cls+'" onclick="setBdayFilter('+m+',this)">'+monthShort[m]+(count>0?' ('+count+')':'')+'</div>';
+}
+container.innerHTML=html;
+}
+
+function setBdayFilter(month,el){
+bdayFilterMonth=month;
+var tabs=document.querySelectorAll('.bday-month-tab');
+for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('active');}
+el.classList.add('active');
+renderBirthdays();
+}
+
+function renderBirthdays(){
+var bdays=getBirthdays();
 var now=new Date();
 var currentMonth=now.getMonth();
 var currentDay=now.getDate();
+document.getElementById('bdayTotalCount').textContent=bdays.length+' cadastrados';
+var filtered=bdays;
+if(bdayFilterMonth!=='all'){
+filtered=bdays.filter(function(b){return b.month===bdayFilterMonth;});
+}
+filtered.sort(function(a,b){
+if(bdayFilterMonth==='all'){
+if(a.month!==b.month){return a.month-b.month;}
+return a.day-b.day;
+}
+return a.day-b.day;
+});
 var grid=document.getElementById('bdayGrid');
+if(filtered.length===0){
+grid.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum aniversariante cadastrado '+(bdayFilterMonth!=='all'?'neste mês':'')+'.</p>';
+return;
+}
 var html='';
-for(var i=0;i<birthdays.length;i++){
-var b=birthdays[i];
+for(var i=0;i<filtered.length;i++){
+var b=filtered[i];
 var isThisMonth=b.month===currentMonth;
 var isToday=isThisMonth&&b.day===currentDay;
 var cls='';
@@ -305,10 +425,80 @@ var badge='';
 if(isToday){cls=' today';badge='<span class="bday-badge today">🎉 HOJE!</span>';}
 else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">📌 Este mês</span>';}
 var dateStr=b.day+' de '+monthNames[b.month];
-html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'</div>';
+html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'<div class="bday-actions"><button class="bday-edit" onclick="editBday(\''+b.id+'\')">✏️ Editar</button><button class="bday-del" onclick="deleteBday(\''+b.id+'\')">🗑️ Excluir</button></div></div>';
 }
 grid.innerHTML=html;
 }
+
+function toggleBdayForm(){
+var form=document.getElementById('bdayForm');
+if(form.classList.contains('active')){
+form.classList.remove('active');
+bdayEditId=null;
+document.getElementById('bdayNameInput').value='';
+document.getElementById('bdayDayInput').value='';
+document.getElementById('bdayMonthInput').value='';
+document.getElementById('bdayFormTitle').textContent='Novo Aniversariante';
+}else{
+form.classList.add('active');
+document.getElementById('bdayNameInput').focus();
+}
+}
+
+function saveBday(){
+var name=document.getElementById('bdayNameInput').value.trim();
+var day=parseInt(document.getElementById('bdayDayInput').value);
+var month=parseInt(document.getElementById('bdayMonthInput').value);
+if(!name){alert('Digite o nome!');return;}
+if(!day||day<1||day>31){alert('Selecione o dia!');return;}
+if(isNaN(month)||month<0||month>11){alert('Selecione o mês!');return;}
+var bdays=getBirthdays();
+if(bdayEditId){
+for(var i=0;i<bdays.length;i++){
+if(bdays[i].id===bdayEditId){
+bdays[i].name=name;
+bdays[i].day=day;
+bdays[i].month=month;
+break;
+}
+}
+}else{
+bdays.push({id:'bday_'+Date.now(),name:name,day:day,month:month});
+}
+saveBirthdays(bdays);
+toggleBdayForm();
+renderBdayMonthTabs();
+renderBirthdays();
+}
+
+function editBday(id){
+var bdays=getBirthdays();
+var b=null;
+for(var i=0;i<bdays.length;i++){
+if(bdays[i].id===id){b=bdays[i];break;}
+}
+if(!b){return;}
+bdayEditId=id;
+document.getElementById('bdayFormTitle').textContent='Editar: '+b.name;
+document.getElementById('bdayNameInput').value=b.name;
+document.getElementById('bdayDayInput').value=b.day;
+document.getElementById('bdayMonthInput').value=b.month;
+var form=document.getElementById('bdayForm');
+form.classList.add('active');
+document.getElementById('bdayNameInput').focus();
+}
+
+function deleteBday(id){
+if(!confirm('Excluir este aniversariante?')){return;}
+var bdays=getBirthdays();
+for(var i=0;i<bdays.length;i++){
+if(bdays[i].id===id){bdays.splice(i,1);break;}
+}
+saveBirthdays(bdays);
+renderBdayMonthTabs();
+renderBirthdays();
+}
+
 function initWeekResponsible(){var offset=(getWeekOffset()+weekOffset)%members.length;var responsible=members[offset];var role=roles[offset%roles.length];document.getElementById('week-name').textContent=responsible;document.getElementById('week-role').textContent='Função: '+role.name;}
 function rotateWeekResponsible(){weekOffset++;initWeekResponsible();initScale();}
 function initArtResponsible(){var offset=(getWeekOffset()+artOffset)%members.length;var artPerson=members[offset];document.getElementById('art-name').textContent=artPerson;}
@@ -322,7 +512,7 @@ function initPresence(){var container=document.getElementById('presence-list');v
 function updatePresence(){var count=0;for(var i=0;i<members.length;i++){var cb=document.getElementById('pres-'+i);var absent=document.getElementById('absent-'+i);if(cb.checked){count++;absent.style.display='none';}else{absent.style.display='block';}}document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';}
 function savePresence(){alert('Presença salva com sucesso!');}
 function initCalendar(){var container=document.getElementById('cal-grid');var html='';for(var i=0;i<postTypes.length;i++){var post=postTypes[i];html+='<div class="cal-day" id="cal-'+i+'" onclick="togglePost('+i+')"><div style="font-weight:700;font-size:0.9rem">'+post.day+'</div><div class="type" style="color:var(--gray);font-size:0.8rem;margin-top:5px">'+post.type+'</div><div style="margin-top:8px;font-size:0.7rem;color:var(--gray)">Clique para marcar</div></div>';}container.innerHTML=html;updatePostStats();}
-function togglePost(i){postDone[i]=!postDone[i];var el=document.getElementById('cal-'+i);if(postDone[i]){el.classList.add('done');}else{el.classList.remove('done');}updatePostStats();}
+function togglePost(i){postDone[i]=!postDone[i];var el=document.getElementById('cal-'+i');if(postDone[i]){el.classList.add('done');}else{el.classList.remove('done');}updatePostStats();}
 function updatePostStats(){var count=0;for(var i=0;i<postDone.length;i++){if(postDone[i])count++;}document.getElementById('post-stats').textContent=count+' de 7 concluídos';}
 function initDeadline(){
 var saved=JSON.parse(localStorage.getItem('deadline')||'null');
