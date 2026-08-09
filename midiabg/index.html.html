@@ -286,7 +286,7 @@ request.onerror=function(e){console.log('Erro DB:'+e.target.error);};
 function saveVideoToDb(id,blob,callback){if(!db){callback(false);return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');var req=store.put({id:id,blob:blob});req.onsuccess=function(){callback(true);};req.onerror=function(){callback(false);};}
 function getVideoFromDb(id,callback){if(!db){callback(null);return;}var tx=db.transaction(['videos'],'readonly');var store=tx.objectStore('videos');var req=store.get(id);req.onsuccess=function(e){if(e.target.result){callback(e.target.result.blob);}else{callback(null);}};req.onerror=function(){callback(null);};}
 function deleteVideoFromDb(id,callback){if(!db){callback();return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');store.delete(id);tx.oncomplete=function(){callback();};}
-function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i&lt;12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
+function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i<12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
 function getWeekNumber(d){var date=new Date(d);date.setHours(0,0,0,0);date.setDate(date.getDate()+3-(date.getDay()+6)%7);var week1=new Date(date.getFullYear(),0,4);return 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7);}
 function getWeekOffset(){var weekNum=getWeekNumber(new Date());var baseWeek=32;return ((weekNum-baseWeek)%members.length+members.length)%members.length;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
@@ -296,7 +296,7 @@ var currentMonth=now.getMonth();
 var currentDay=now.getDate();
 var grid=document.getElementById('bdayGrid');
 var html='';
-for(var i=0;i&lt;birthdays.length;i++){
+for(var i=0;i<birthdays.length;i++){
 var b=birthdays[i];
 var isThisMonth=b.month===currentMonth;
 var isToday=isThisMonth&&b.day===currentDay;
@@ -361,18 +361,56 @@ var targetDate=new Date(parts[0],parts[1]-1,parts[2],23,59,59);
 var now=new Date();
 var diff=targetDate-now;
 if(dl.done){
-box.className='deadline-box done';countEl.className='deadline-count done';countEl.textContent='✅';textEl.textContent='Arte entregue!';dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';
-}else if(diff&lt;=0){
-box.className='deadline-box urgent';countEl.className='deadline-count urgent';countEl.textContent='⚠️';textEl.textContent='ATRASADO!';dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');btnDone.style.display='block';btnDone.textContent='⚠️ Entregar Agora';btnReset.style.display='inline-block';inputRow.style.display='none';
+box.className='deadline-box done';
+countEl.className='deadline-count done';
+countEl.textContent='✅';
+textEl.textContent='Arte entregue!';
+dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');
+btnDone.style.display='none';
+btnReset.style.display='inline-block';
+inputRow.style.display='none';
+}else if(diff<=0){
+box.className='deadline-box urgent';
+countEl.className='deadline-count urgent';
+countEl.textContent='⚠️';
+textEl.textContent='ATRASADO!';
+dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');
+btnDone.style.display='block';
+btnDone.textContent='⚠️ Entregar Agora';
+btnReset.style.display='inline-block';
+inputRow.style.display='none';
 }else{
-var days=Math.floor(diff/86400000);var hours=Math.floor((diff%86400000)/3600000);box.className='deadline-box';countEl.className='deadline-count';if(days&lt;=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}countEl.textContent=days;if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}if(hours>0&&days&lt;2){textEl.textContent+=' e '+hours+'h';}dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';btnDone.style.display='block';btnDone.textContent='✅ Concluído';btnReset.style.display='inline-block';inputRow.style.display='none';
+var days=Math.floor(diff/86400000);
+var hours=Math.floor((diff%86400000)/3600000);
+box.className='deadline-box';
+countEl.className='deadline-count';
+if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}
+countEl.textContent=days;
+if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}
+if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}
+dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';
+btnDone.style.display='block';
+btnDone.textContent='✅ Concluído';
+btnReset.style.display='inline-block';
+inputRow.style.display='none';
 }
 }
 function markDone(){
-var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(!saved){return;}saved.done=true;saved.doneAt=new Date().toISOString();localStorage.setItem('deadline',JSON.stringify(saved));updateDeadline(saved);
+var saved=JSON.parse(localStorage.getItem('deadline')||'null');
+if(!saved){return;}
+saved.done=true;
+saved.doneAt=new Date().toISOString();
+localStorage.setItem('deadline',JSON.stringify(saved));
+updateDeadline(saved);
 }
-function resetDeadline(){localStorage.removeItem('deadline');showDeadlineForm();}
-setInterval(function(){var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(saved&&!saved.done){updateDeadline(saved);}},60000);
+function resetDeadline(){
+localStorage.removeItem('deadline');
+showDeadlineForm();
+}
+setInterval(function(){
+var saved=JSON.parse(localStorage.getItem('deadline')||'null');
+if(saved&&!saved.done){updateDeadline(saved);}
+},60000);
 function initHinos(){var saved=JSON.parse(localStorage.getItem('hinos')||'[]');renderHinos(saved);}
 function renderHinos(hinos){var container=document.getElementById('hinos-grid');document.getElementById('hino-count').textContent=hinos.length+' hinos';var html='';for(var i=0;i<hinos.length;i++){var h=hinos[i];var badge=h.kind==='file'?'<span class="hino-badge file">📂 Arquivo</span>':'<span class="hino-badge link">🔗 Link</span>';var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';}html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">➕</div><div>Adicionar Hino</div></div>';container.innerHTML=html;}
 function showHinoChoice(){var choice=confirm('OK = UPLOAD de arquivo\nCancelar = usar link');if(choice){document.getElementById('fileInput').click();}else{var name=prompt('Nome do hino:');if(!name)return;var link=prompt('Cole o link do Google Drive:');if(!link)return;var type=prompt('Tipo:','Vídeo com letra');if(!type)type='Vídeo com letra';var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}}
