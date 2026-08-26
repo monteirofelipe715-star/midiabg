@@ -290,7 +290,7 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div class="section-header">
 <h2>Escala de Domingo</h2>
 <div class="scale-btns">
-<button class="btn-download" onclick="downloadScale()">Baixar</button>
+<button class="btn-download" onclick="downloadScalePNG()">Baixar Imagem</button>
 <button class="btn-print" onclick="exportScale()">Imprimir</button>
 <button class="btn-rotate" onclick="rotateScale()">Gerar Nova Escala</button>
 </div>
@@ -418,9 +418,71 @@ function logout(){document.getElementById('portal').style.display='none';documen
 function initScale(){dbRef.ref('config/scaleOffset').on('value',function(snapshot){var off=snapshot.val();if(off===null){off=0;dbRef.ref('config/scaleOffset').set(0);}window.scaleOff=off;renderScale();});}
 function renderScale(){var container=document.getElementById('scale-container');if(!container){return;}var artIdx=window.artIdx||0;var scaleOff=window.scaleOff||0;var artPerson=members[artIdx];var html='';var roleIdx=0;for(var i=0;i<members.length;i++){var member=members[i];if(member===artPerson){html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">Arte de Domingo</div><div class="role-detail">Responsavel pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';}else{var r=roles[(roleIdx+scaleOff)%roles.length];roleIdx++;html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--white);font-size:0.9rem">'+r.name+'</div><div class="role-detail">'+r.detail+'</div></div><span class="status-badge bg-ok">Confirmado</span></div>';}}container.innerHTML=html;document.getElementById('last-update').textContent='Ultima atualizacao: '+new Date().toLocaleString('pt-BR');}
 function rotateScale(){var newOff=((window.scaleOff||0)+1)%roles.length;dbRef.ref('config/scaleOffset').set(newOff);}
-function getScaleHTML(){var artIdx=window.artIdx||0;var scaleOff=window.scaleOff||0;var artPerson=members[artIdx];var rows='';var roleIdx=0;for(var i=0;i<members.length;i++){var member=members[i];if(member===artPerson){rows+='<tr class="art"><td>'+member+'</td><td>Arte de Domingo</td></tr>';}else{var r=roles[(roleIdx+scaleOff)%roles.length];roleIdx++;rows+='<tr><td>'+member+'</td><td>'+r.name+'</td></tr>';}}return rows;}
-function exportScale(){var win=window.open('','_blank');var html='<html><head><title>Escala de Domingo - ADMBG</title><style>body{font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000}h1{text-align:center;color:#FF6B00}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:12px;text-align:left}th{background:#FF6B00;color:#fff}.art{background:#e8f5e9;font-weight:bold}p{text-align:center;color:#666;margin-top:20px}</style></head><body>';html+='<h1>AD Madureira - Bento Goncalves/RS</h1>';html+='<h2 style="text-align:center">Escala de Domingo</h2>';html+='<table><tr><th>Membro</th><th>Funcao</th></tr>'+getScaleHTML()+'</table>';html+='<p>Escala gerada em '+new Date().toLocaleString('pt-BR')+'</p>';html+='<p>Pr. Presidente Gideon Barros</p>';html+='</body></html>';win.document.write(html);win.document.close();setTimeout(function(){win.print();},500);}
-function downloadScale(){var rows=getScaleHTML();var dateStr=new Date().toLocaleDateString('pt-BR');var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Escala de Domingo - ADMBG</title><style>body{font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000;max-width:600px;margin:0 auto}h1{text-align:center;color:#FF6B00;margin-bottom:5px}h2{text-align:center;color:#333;font-size:1.1rem;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:12px;text-align:left}th{background:#FF6B00;color:#fff}td:first-child{font-weight:bold}.art{background:#e8f5e9}.footer{text-align:center;color:#666;margin-top:25px;font-size:0.8rem}.logo{text-align:center;font-size:1.8rem;margin-bottom:10px}</style></head><body><div class="logo">⛪</div><h1>AD Madureira</h1><h2>Bento Goncalves/RS</h2><table><tr><th>Membro</th><th>Funcao</th></tr>'+rows+'</table><div class="footer">Escala gerada em '+dateStr+'<br>Pr. Presidente Gideon Barros</div></body></html>';var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='escala-domingo-'+dateStr.replace(/\//g,'-')+'.html';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);alert('Escala baixada! Abra o arquivo e use "Compartilhar" para mandar no WhatsApp.');}
+function getScaleData(){var artIdx=window.artIdx||0;var scaleOff=window.scaleOff||0;var artPerson=members[artIdx];var rows=[];var roleIdx=0;for(var i=0;i<members.length;i++){var member=members[i];if(member===artPerson){rows.push({member:member,role:'Arte de Domingo',isArt:true});}else{var r=roles[(roleIdx+scaleOff)%roles.length];roleIdx++;rows.push({member:member,role:r.name,isArt:false});}}return rows;}
+function exportScale(){var win=window.open('','_blank');var rows=getScaleData();var html='<html><head><title>Escala de Domingo - ADMBG</title><style>body{font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000}h1{text-align:center;color:#FF6B00}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:12px;text-align:left}th{background:#FF6B00;color:#fff}.art{background:#e8f5e9;font-weight:bold}p{text-align:center;color:#666;margin-top:20px}</style></head><body>';html+='<h1>AD Madureira - Bento Goncalves/RS</h1>';html+='<h2 style="text-align:center">Escala de Domingo</h2>';html+='<table><tr><th>Membro</th><th>Funcao</th></tr>';for(var i=0;i<rows.length;i++){var cls=rows[i].isArt?' class="art"':'';html+='<tr'+cls+'><td>'+rows[i].member+'</td><td>'+rows[i].role+'</td></tr>';}html+='</table>';html+='<p>Escala gerada em '+new Date().toLocaleString('pt-BR')+'</p>';html+='<p>Pr. Presidente Gideon Barros</p>';html+='</body></html>';win.document.write(html);win.document.close();setTimeout(function(){win.print();},500);}
+function downloadScalePNG(){
+var canvas=document.createElement('canvas');
+canvas.width=800;
+canvas.height=500;
+var ctx=canvas.getContext('2d');
+ctx.fillStyle='#FFFFFF';
+ctx.fillRect(0,0,800,500);
+ctx.fillStyle='#FF6B00';
+ctx.fillRect(0,0,800,8);
+ctx.fillStyle='#1A1A1A';
+ctx.font='bold 28px Arial';
+ctx.textAlign='center';
+ctx.fillText('AD Madureira - Bento Goncalves/RS',400,50);
+ctx.fillStyle='#FF6B00';
+ctx.font='bold 20px Arial';
+ctx.fillText('Escala de Domingo',400,80);
+var dateStr=new Date().toLocaleDateString('pt-BR');
+ctx.fillStyle='#999999';
+ctx.font='14px Arial';
+ctx.fillText(dateStr,400,105);
+var rows=getScaleData();
+var y=145;
+ctx.textAlign='left';
+for(var i=0;i<rows.length;i++){
+var row=rows[i];
+if(row.isArt){
+ctx.fillStyle='#E8F5E9';
+ctx.fillRect(40,y-20,720,38);
+ctx.fillStyle='#00C853';
+ctx.fillRect(40,y-20,5,38);
+ctx.fillStyle='#1A1A1A';
+ctx.font='bold 18px Arial';
+ctx.fillText(row.member,70,y+5);
+ctx.fillStyle='#00C853';
+ctx.font='16px Arial';
+ctx.fillText('Arte de Domingo',350,y+5);
+}else{
+ctx.fillStyle='#F5F5F5';
+ctx.fillRect(40,y-20,720,38);
+ctx.fillStyle='#1A1A1A';
+ctx.font='bold 18px Arial';
+ctx.fillText(row.member,70,y+5);
+ctx.fillStyle='#666666';
+ctx.font='16px Arial';
+ctx.fillText(row.role,350,y+5);
+}
+y+=42;
+}
+ctx.fillStyle='#999999';
+ctx.font='12px Arial';
+ctx.textAlign='center';
+ctx.fillText('Pr. Presidente Gideon Barros',400,480);
+canvas.toBlob(function(blob){
+var url=URL.createObjectURL(blob);
+var a=document.createElement('a');
+a.href=url;
+a.download='escala-domingo.png';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
+},'image/png');
+}
 function initPresence(){dbRef.ref('presence').on('value',function(snapshot){var data=snapshot.val();var container=document.getElementById('presence-list');var html='';for(var i=0;i<members.length;i++){var present=data&&data['m'+i]?true:false;var reason=data&&data['m'+i+'_reason']?data['m'+i+'_reason']:'';html+='<div class="presence-item"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">'+members[i]+'</span><input type="checkbox" id="pres-'+i+'" onchange="togglePresence('+i+')" '+(present?'checked':'')+' style="width:20px;height:20px;cursor:pointer"></div>'+(present?'':'<div class="absent-fields" style="display:block;margin-top:5px"><input type="text" class="login-input" style="margin:0;font-size:0.8rem" placeholder="Motivo da falta..." value="'+reason+'" onblur="savePresenceReason('+i+',this.value)"></div>')+'</div>';}container.innerHTML=html;updatePresenceCount();});}
 function togglePresence(i){var cb=document.getElementById('pres-'+i);var updates={};updates['m'+i]=cb.checked;if(!cb.checked){updates['m'+i+'_reason']='';}dbRef.ref('presence').update(updates);}
 function savePresenceReason(i,reason){var updates={};updates['m'+i+'_reason']=reason;dbRef.ref('presence').update(updates);}
