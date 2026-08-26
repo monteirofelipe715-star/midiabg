@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FF6B00">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Portal Mídia">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href='data:application/json,{"name":"Portal Mídia ADMBG","short_name":"Mídia","start_url":".","display":"standalone","background_color":"#0A0A0A","theme_color":"#FF6B00","icons":[{"src":"logo-midia.png","sizes":"192x192","type":"image/png"},{"src":"logo-midia.png","sizes":"512x512","type":"image/png"}]}'>
 <title>Portal Mídia | AD Madureira BG</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -30,14 +36,13 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);backdrop
 .nav-links a:hover,.nav-links button:hover{color:var(--white);background:var(--gray-light)}
 .btn-drive{background:rgba(255,107,0,0.1)!important;color:var(--primary)!important;font-weight:700}
 section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relative;z-index:10}
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:10px}
 .card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:14px;padding:20px;transition:0.3s}
 .card:hover{border-color:var(--primary)}
 .motivation-box{background:linear-gradient(135deg,rgba(255,107,0,0.1),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.3);border-radius:14px;padding:30px;text-align:center;margin-bottom:10px}
 .motivation-text{font-size:1.15rem;font-style:italic;color:var(--white);line-height:1.6}
 .motivation-author{font-size:0.8rem;color:var(--primary);margin-top:10px;font-weight:600}
 .bday-section{background:linear-gradient(135deg,rgba(255,107,0,0.08),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.2);border-radius:14px;padding:25px;margin-bottom:10px}
-.bday-title{font-size:1.1rem;font-weight:700;margin-bottom:15px;text-align:center}
 .bday-month-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:15px}
 .bday-month-tab{background:var(--dark-card);border:1px solid var(--gray-light);color:var(--gray);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;white-space:nowrap;transition:0.3s;pointer-events:auto}
 .bday-month-tab:hover{border-color:var(--primary);color:var(--white)}
@@ -72,6 +77,17 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .bday-form-actions button{flex:1;padding:10px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:0.9rem;pointer-events:auto}
 .bday-save{background:var(--green);color:white}
 .bday-cancel{background:var(--gray-light);color:var(--gray)}
+.cult-theme-box{background:linear-gradient(135deg,rgba(255,107,0,0.1),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.3);border-radius:14px;padding:25px;margin-bottom:10px}
+.cult-theme-label{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em}
+.cult-theme-title{font-size:1.5rem;font-weight:800;color:var(--primary);margin:8px 0}
+.cult-section{margin-top:15px}
+.cult-section-label{font-size:0.8rem;color:var(--gray);margin-bottom:8px;font-weight:600}
+.cult-item{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cult-item-text{flex:1;font-size:0.85rem}
+.cult-item-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:0.7rem;pointer-events:auto}
+.cult-add-row{display:flex;gap:8px;margin-top:8px}
+.cult-add-input{flex:1;background:var(--dark);border:1px solid var(--gray-light);border-radius:8px;padding:8px;color:var(--white);font-size:0.85rem;outline:none;pointer-events:auto}
+.cult-add-btn{background:var(--primary);color:white;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:0.8rem;pointer-events:auto;white-space:nowrap}
 .week-responsible{background:linear-gradient(135deg,rgba(255,107,0,0.15),rgba(255,107,0,0.03));border:1px solid var(--primary);border-radius:14px;padding:25px;text-align:center}
 .week-label{font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em}
 .week-name{font-size:1.8rem;font-weight:800;color:var(--primary);margin:8px 0}
@@ -98,6 +114,9 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .btn-action{background:var(--gray-light);border:none;color:var(--white);padding:6px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;pointer-events:auto}
 .btn-rotate{background:var(--primary);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
 .btn-green{background:var(--green);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
+.btn-print{background:var(--gray-light);color:var(--white);padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
+.btn-print:hover{background:var(--primary)}
+.scale-btns{display:flex;gap:10px;flex-wrap:wrap}
 .presence-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
 .presence-item{display:flex;flex-direction:column;gap:10px}
 .absent-fields{display:none;margin-top:5px}
@@ -131,6 +150,8 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .video-modal video{max-width:90%;max-height:80vh;border-radius:12px}
 .video-modal-close{position:fixed;top:20px;right:20px;background:var(--red);color:white;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;z-index:2001;pointer-events:auto}
 .video-modal-title{color:var(--white);font-size:1rem;margin-bottom:15px;font-weight:600}
+.pwa-install{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--primary);color:white;padding:12px 24px;border-radius:12px;cursor:pointer;font-weight:700;font-size:0.9rem;z-index:500;box-shadow:0 4px 20px rgba(255,107,0,0.4);display:none}
+.pwa-install.show{display:block}
 </style>
 </head>
 <body>
@@ -153,6 +174,7 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 </div>
 <div class="nav-links">
 <a href="#aniversariantes">Aniversários</a>
+<a href="#culto">Culto</a>
 <a href="#escala">Escala</a>
 <a href="#presenca">Presença</a>
 <a href="#calendario">Posts</a>
@@ -213,15 +235,39 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 </div>
 </div>
 </section>
+<section id="culto">
+<div class="section-header"><h2>Temas do Culto</h2></div>
+<div class="cult-theme-box">
+<div class="cult-theme-label">Tema do culto de domingo</div>
+<input type="text" id="cultThemeInput" class="cult-add-input" style="margin-top:8px" placeholder="Digite o tema e pressione Enter" onkeydown="if(event.key==='Enter')saveCultTheme()">
+<div class="cult-theme-title" id="cultThemeDisplay" style="margin-top:10px">Sem tema definido</div>
+<div class="cult-section">
+<div class="cult-section-label">Hinos do culto</div>
+<div id="cultHinosList"></div>
+<div class="cult-add-row">
+<input type="text" id="cultHinoInput" class="cult-add-input" placeholder="Nome do hino">
+<button class="cult-add-btn" onclick="addCultHino()">+ Hino</button>
+</div>
+</div>
+<div class="cult-section">
+<div class="cult-section-label">Ordem do programa</div>
+<div id="cultProgramList"></div>
+<div class="cult-add-row">
+<input type="text" id="cultProgramInput" class="cult-add-input" placeholder="Ex: Louvor, Palavra, Apelo">
+<button class="cult-add-btn" onclick="addCultProgram()">+ Item</button>
+</div>
+</div>
+</div>
+</section>
 <section>
 <div class="week-responsible">
-<div class="week-label">Responsável da Semana</div>
+<div class="week-label">Responsavel da Semana</div>
 <div class="week-name" id="week-name">Carregando...</div>
 <div class="week-role" id="week-role">—</div>
-<button class="btn-rotate" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateWeekResponsible()">Alterar Responsável</button>
+<button class="btn-rotate" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateWeekResponsible()">Alterar Responsavel</button>
 </div>
 <div class="art-responsible">
-<div class="art-label">Responsável pela Arte de Domingo</div>
+<div class="art-label">Responsavel pela Arte de Domingo</div>
 <div class="art-name" id="art-name">Carregando...</div>
 <div style="font-size:0.8rem;color:var(--gray)">So muda quando clicar no botao</div>
 <button class="btn-green" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateArtResponsible()">Alterar Arte</button>
@@ -234,30 +280,33 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div class="deadline-input-row" id="deadlineInputRow">
 <button class="btn-deadline" onclick="setDeadline()">Definir 2 Dias</button>
 </div>
-<button class="btn-done" id="btnDone" onclick="markDone()" style="display:none">Concluído</button>
+<button class="btn-done" id="btnDone" onclick="markDone()" style="display:none">Concluido</button>
 <button class="btn-reset" id="btnReset" onclick="resetDeadline()" style="display:none">Novo Prazo</button>
 </div>
 </section>
 <section id="escala">
 <div class="section-header">
 <h2>Escala de Domingo</h2>
+<div class="scale-btns">
+<button class="btn-print" onclick="exportScale()">Exportar</button>
 <button class="btn-rotate" onclick="rotateScale()">Gerar Nova Escala</button>
+</div>
 </div>
 <div class="card" id="scale-container"></div>
 <p id="last-update" style="font-size:0.7rem;color:var(--gray);margin-top:10px"></p>
 </section>
 <section id="presenca">
 <div class="section-header">
-<h2>Presença do Culto</h2>
+<h2>Presenca do Culto</h2>
 <span id="presence-count" style="color:var(--primary);font-weight:700">0 de 4 presentes</span>
 </div>
 <div class="card presence-list" id="presence-list"></div>
-<button class="btn-rotate" style="margin-top:20px;width:100%" onclick="savePresence()">Salvar Presença</button>
+<button class="btn-rotate" style="margin-top:20px;width:100%" onclick="savePresence()">Salvar Presenca</button>
 </section>
 <section id="calendario">
 <div class="section-header">
-<h2>Calendário de Posts</h2>
-<span id="post-stats" style="font-size:0.9rem">0 de 7 concluídos</span>
+<h2>Calendario de Posts</h2>
+<span id="post-stats" style="font-size:0.9rem">0 de 7 concluidos</span>
 </div>
 <div class="cal-grid" id="cal-grid"></div>
 </section>
@@ -281,7 +330,7 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div id="notice-list"></div>
 </section>
 <section style="text-align:center;padding:30px 0">
-<p style="color:var(--gray);font-size:0.8rem">AD Madureira - Bento Gonçalves/RS</p>
+<p style="color:var(--gray);font-size:0.8rem">AD Madureira - Bento Goncalves/RS</p>
 <p style="color:var(--gray);font-size:0.7rem;margin-top:5px">Pr. Presidente Gideon Barros</p>
 </section>
 </div>
@@ -291,6 +340,7 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div class="video-modal-title" id="videoModalTitle"></div>
 <video id="videoPlayer" controls autoplay></video>
 </div>
+<div class="pwa-install" id="pwaInstall" onclick="installPWA()">Instalar App no celular</div>
 <input type="file" id="fileInput" accept="video/*" style="display:none">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -327,11 +377,11 @@ var motivations=[
 {text:'"Servi uns aos outros com o dom que cada um recebeu."',author:'1 Pedro 4:10'},
 {text:'"O trabalho da mídia leva a Palavra a quem não pode estar presente."',author:'Equipe ADMBG'}
 ];
-var postDone=[false,false,false,false,false,false,false];
 var bgIcons=['📷','📱','📸','🎥','🎬','📹','📽️','📱','📷','📸'];
 var bdayFilterMonth='all';
 var bdayEditId=null;
 var idb=null;
+var deferredPrompt=null;
 
 function initDb(){
 var request=indexedDB.open('MidiabgDB',1);
@@ -345,6 +395,23 @@ function deleteVideoFromDb(id,callback){if(!idb){callback();return;}var tx=idb.t
 function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i<12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
 
+function initPWA(){
+window.addEventListener('beforeinstallprompt',function(e){
+e.preventDefault();
+deferredPrompt=e;
+document.getElementById('pwaInstall').classList.add('show');
+});
+}
+function installPWA(){
+if(deferredPrompt){
+deferredPrompt.prompt();
+deferredPrompt.userChoice.then(function(){
+deferredPrompt=null;
+document.getElementById('pwaInstall').classList.remove('show');
+});
+}
+}
+
 function initBdayDayOptions(){
 var sel=document.getElementById('bdayDayInput');
 for(var i=1;i<=31;i++){
@@ -353,7 +420,6 @@ opt.value=i;opt.textContent=i;
 sel.appendChild(opt);
 }
 }
-
 function initBirthdays(){
 initBdayDayOptions();
 dbRef.ref('birthdays').on('value',function(snapshot){
@@ -361,18 +427,13 @@ var data=snapshot.val();
 var bdays=[];
 if(data){
 var keys=Object.keys(data);
-for(var i=0;i<keys.length;i++){
-var b=data[keys[i]];
-b.id=keys[i];
-bdays.push(b);
-}
+for(var i=0;i<keys.length;i++){var b=data[keys[i]];b.id=keys[i];bdays.push(b);}
 }
 window.bdaysCache=bdays;
 renderBdayMonthTabs();
 renderBirthdays();
 });
 }
-
 function renderBdayMonthTabs(){
 var bdays=window.bdaysCache||[];
 var now=new Date();
@@ -414,10 +475,9 @@ for(var i=0;i<filtered.length;i++){
 var b=filtered[i];
 var isThisMonth=b.month===currentMonth;
 var isToday=isThisMonth&&b.day===currentDay;
-var cls='';
-var badge='';
+var cls='';var badge='';
 if(isToday){cls=' today';badge='<span class="bday-badge today">HOJE!</span>';}
-else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">Este mês</span>';}
+else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">Este mes</span>';}
 var dateStr=b.day+' de '+monthNames[b.month];
 html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'<div class="bday-actions"><button class="bday-edit" onclick="editBday(\''+b.id+'\')">Editar</button><button class="bday-del" onclick="deleteBday(\''+b.id+'\')">Excluir</button></div></div>';
 }
@@ -426,16 +486,10 @@ grid.innerHTML=html;
 function toggleBdayForm(){
 var form=document.getElementById('bdayForm');
 if(form.classList.contains('active')){
-form.classList.remove('active');
-bdayEditId=null;
-document.getElementById('bdayNameInput').value='';
-document.getElementById('bdayDayInput').value='';
-document.getElementById('bdayMonthInput').value='';
+form.classList.remove('active');bdayEditId=null;
+document.getElementById('bdayNameInput').value='';document.getElementById('bdayDayInput').value='';document.getElementById('bdayMonthInput').value='';
 document.getElementById('bdayFormTitle').textContent='Novo Aniversariante';
-}else{
-form.classList.add('active');
-document.getElementById('bdayNameInput').focus();
-}
+}else{form.classList.add('active');document.getElementById('bdayNameInput').focus();}
 }
 function saveBday(){
 var name=document.getElementById('bdayNameInput').value.trim();
@@ -443,17 +497,13 @@ var day=parseInt(document.getElementById('bdayDayInput').value);
 var month=parseInt(document.getElementById('bdayMonthInput').value);
 if(!name){alert('Digite o nome!');return;}
 if(!day||day<1||day>31){alert('Selecione o dia!');return;}
-if(isNaN(month)||month<0||month>11){alert('Selecione o mês!');return;}
-if(bdayEditId){
-dbRef.ref('birthdays/'+bdayEditId).update({name:name,day:day,month:month});
-}else{
-dbRef.ref('birthdays').push({name:name,day:day,month:month});
-}
+if(isNaN(month)||month<0||month>11){alert('Selecione o mes!');return;}
+if(bdayEditId){dbRef.ref('birthdays/'+bdayEditId).update({name:name,day:day,month:month});}
+else{dbRef.ref('birthdays').push({name:name,day:day,month:month});}
 toggleBdayForm();
 }
 function editBday(id){
-var bdays=window.bdaysCache||[];
-var b=null;
+var bdays=window.bdaysCache||[];var b=null;
 for(var i=0;i<bdays.length;i++){if(bdays[i].id===id){b=bdays[i];break;}}
 if(!b){return;}
 bdayEditId=id;
@@ -464,9 +514,73 @@ document.getElementById('bdayMonthInput').value=b.month;
 document.getElementById('bdayForm').classList.add('active');
 document.getElementById('bdayNameInput').focus();
 }
-function deleteBday(id){
-if(!confirm('Excluir este aniversariante?')){return;}
-dbRef.ref('birthdays/'+id).remove();
+function deleteBday(id){if(!confirm('Excluir este aniversariante?')){return;}dbRef.ref('birthdays/'+id).remove();}
+
+function initCultTheme(){
+dbRef.ref('cultTheme').on('value',function(snapshot){
+var data=snapshot.val();
+if(data&&data.theme){
+document.getElementById('cultThemeDisplay').textContent=data.theme;
+document.getElementById('cultThemeInput').value='';
+}else{
+document.getElementById('cultThemeDisplay').textContent='Sem tema definido';
+}
+renderCultHinos(data&&data.hinos?data.hinos:[]);
+renderCultProgram(data&&data.program?data.program:[]);
+});
+}
+function saveCultTheme(){
+var theme=document.getElementById('cultThemeInput').value.trim();
+if(!theme){return;}
+dbRef.ref('cultTheme/theme').set(theme);
+}
+function renderCultHinos(hinos){
+var list=document.getElementById('cultHinosList');
+var html='';
+for(var i=0;i<hinos.length;i++){
+html+='<div class="cult-item"><span class="cult-item-text">🎵 '+hinos[i]+'</span><button class="cult-item-del" onclick="delCultHino('+i+')">X</button></div>';
+}
+list.innerHTML=html;
+}
+function addCultHino(){
+var input=document.getElementById('cultHinoInput');
+var hino=input.value.trim();
+if(!hino){return;}
+dbRef.ref('cultTheme/hinos').transaction(function(current){
+if(!current){return [hino];}
+current.push(hino);return current;
+});
+input.value='';
+}
+function delCultHino(index){
+dbRef.ref('cultTheme/hinos').transaction(function(current){
+if(!current){return [];}
+current.splice(index,1);return current;
+});
+}
+function renderCultProgram(program){
+var list=document.getElementById('cultProgramList');
+var html='';
+for(var i=0;i<program.length;i++){
+html+='<div class="cult-item"><span class="cult-item-text">'+(i+1)+'. '+program[i]+'</span><button class="cult-item-del" onclick="delCultProgram('+i+')">X</button></div>';
+}
+list.innerHTML=html;
+}
+function addCultProgram(){
+var input=document.getElementById('cultProgramInput');
+var item=input.value.trim();
+if(!item){return;}
+dbRef.ref('cultTheme/program').transaction(function(current){
+if(!current){return [item];}
+current.push(item);return current;
+});
+input.value='';
+}
+function delCultProgram(index){
+dbRef.ref('cultTheme/program').transaction(function(current){
+if(!current){return [];}
+current.splice(index,1);return current;
+});
 }
 
 function initWeekResponsible(){
@@ -477,31 +591,23 @@ idx=((idx%members.length)+members.length)%members.length;
 var responsible=members[idx];
 var role=roles[idx%roles.length];
 document.getElementById('week-name').textContent=responsible;
-document.getElementById('week-role').textContent='Função: '+role.name;
+document.getElementById('week-role').textContent='Funcao: '+role.name;
 window.weekIdx=idx;
 renderScale();
 });
 }
-function rotateWeekResponsible(){
-var newIdx=((window.weekIdx||0)+1)%members.length;
-dbRef.ref('config/weekIndex').set(newIdx);
-}
+function rotateWeekResponsible(){var newIdx=((window.weekIdx||0)+1)%members.length;dbRef.ref('config/weekIndex').set(newIdx);}
 function initArtResponsible(){
 dbRef.ref('config/artIndex').on('value',function(snapshot){
 var idx=snapshot.val();
 if(idx===null){idx=0;dbRef.ref('config/artIndex').set(0);}
 idx=((idx%members.length)+members.length)%members.length;
-var artPerson=members[idx];
-document.getElementById('art-name').textContent=artPerson;
+document.getElementById('art-name').textContent=members[idx];
 window.artIdx=idx;
 renderScale();
 });
 }
-function rotateArtResponsible(){
-var newIdx=((window.artIdx||0)+1)%members.length;
-dbRef.ref('config/artIndex').set(newIdx);
-}
-
+function rotateArtResponsible(){var newIdx=((window.artIdx||0)+1)%members.length;dbRef.ref('config/artIndex').set(newIdx);}
 function login(){var pass=document.getElementById('pass').value;if(pass===PASSWORD){document.getElementById('login-screen').style.display='none';document.getElementById('portal').style.display='block';initAll();}else{alert('Senha incorreta!');}}
 function logout(){document.getElementById('portal').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('pass').value='';}
 
@@ -515,17 +621,15 @@ renderScale();
 }
 function renderScale(){
 var container=document.getElementById('scale-container');
-if(container===null){return;}
+if(!container){return;}
 var artIdx=window.artIdx||0;
-var weekIdx=window.weekIdx||0;
 var scaleOff=window.scaleOff||0;
 var artPerson=members[artIdx];
-var html='';
-var roleIdx=0;
+var html='';var roleIdx=0;
 for(var i=0;i<members.length;i++){
 var member=members[i];
 if(member===artPerson){
-html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">🎨 Arte de Domingo</div><div class="role-detail">Responsável pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
+html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">Arte de Domingo</div><div class="role-detail">Responsavel pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
 }else{
 var r=roles[(roleIdx+scaleOff)%roles.length];
 roleIdx++;
@@ -533,18 +637,102 @@ html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><di
 }
 }
 container.innerHTML=html;
-document.getElementById('last-update').textContent='Última atualização: '+new Date().toLocaleString('pt-BR');
+document.getElementById('last-update').textContent='Ultima atualizacao: '+new Date().toLocaleString('pt-BR');
 }
-function rotateScale(){
-var newOff=((window.scaleOff||0)+1)%roles.length;
-dbRef.ref('config/scaleOffset').set(newOff);
+function rotateScale(){var newOff=((window.scaleOff||0)+1)%roles.length;dbRef.ref('config/scaleOffset').set(newOff);}
+function exportScale(){
+var win=window.open('','_blank');
+var html='<html><head><title>Escala de Domingo - ADMBG</title><style>body{font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000}h1{text-align:center;color:#FF6B00}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:12px;text-align:left}th{background:#FF6B00;color:#fff}.art{background:#e8f5e9;font-weight:bold}p{text-align:center;color:#666;margin-top:20px}</style></head><body>';
+html+='<h1>AD Madureira - Bento Goncalves/RS</h1>';
+html+='<h2 style="text-align:center">Escala de Domingo</h2>';
+html+='<table><tr><th>Membro</th><th>Funcao</th></tr>';
+var artIdx=window.artIdx||0;
+var scaleOff=window.scaleOff||0;
+var artPerson=members[artIdx];
+var roleIdx=0;
+for(var i=0;i<members.length;i++){
+var member=members[i];
+if(member===artPerson){
+html+='<tr class="art"><td>'+member+'</td><td>Arte de Domingo</td></tr>';
+}else{
+var r=roles[(roleIdx+scaleOff)%roles.length];
+roleIdx++;
+html+='<tr><td>'+member+'</td><td>'+r.name+'</td></tr>';
 }
-function initPresence(){var container=document.getElementById('presence-list');var html='';for(var i=0;i<members.length;i++){var member=members[i];html+='<div class="presence-item"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">'+member+'</span><input type="checkbox" id="pres-'+i+'" onchange="updatePresence()" style="width:20px;height:20px;cursor:pointer"></div><div class="absent-fields" id="absent-'+i+'"><input type="text" class="login-input" style="margin:0;font-size:0.8rem" placeholder="Motivo da falta..."></div></div>';}container.innerHTML=html;}
-function updatePresence(){var count=0;for(var i=0;i<members.length;i++){var cb=document.getElementById('pres-'+i);var absent=document.getElementById('absent-'+i);if(cb.checked){count++;absent.style.display='none';}else{absent.style.display='block';}}document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';}
-function savePresence(){alert('Presença salva com sucesso!');}
-function initCalendar(){var container=document.getElementById('cal-grid');var html='';for(var i=0;i<postTypes.length;i++){var post=postTypes[i];html+='<div class="cal-day" id="cal-'+i+'" onclick="togglePost('+i+')"><div style="font-weight:700;font-size:0.9rem">'+post.day+'</div><div class="type" style="color:var(--gray);font-size:0.8rem;margin-top:5px">'+post.type+'</div><div style="margin-top:8px;font-size:0.7rem;color:var(--gray)">Clique para marcar</div></div>';}container.innerHTML=html;updatePostStats();}
-function togglePost(i){postDone[i]=!postDone[i];var el=document.getElementById('cal-'+i);if(postDone[i]){el.classList.add('done');}else{el.classList.remove('done');}updatePostStats();}
-function updatePostStats(){var count=0;for(var i=0;i<postDone.length;i++){if(postDone[i])count++;}document.getElementById('post-stats').textContent=count+' de 7 concluídos';}
+}
+html+='</table>';
+html+='<p>Escala gerada em '+new Date().toLocaleString('pt-BR')+'</p>';
+html+='<p>Pr. Presidente Gideon Barros</p>';
+html+='</body></html>';
+win.document.write(html);
+win.document.close();
+setTimeout(function(){win.print();},500);
+}
+
+function initPresence(){
+dbRef.ref('presence').on('value',function(snapshot){
+var data=snapshot.val();
+var container=document.getElementById('presence-list');
+var html='';
+for(var i=0;i<members.length;i++){
+var present=data&&data['m'+i]?true:false;
+var reason=data&&data['m'+i+'_reason']?data['m'+i+'_reason']:'';
+html+='<div class="presence-item"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">'+members[i]+'</span><input type="checkbox" id="pres-'+i+'" onchange="togglePresence('+i+')" '+(present?'checked':'')+' style="width:20px;height:20px;cursor:pointer"></div>'+(present?'':'<div class="absent-fields" style="display:block;margin-top:5px"><input type="text" class="login-input" style="margin:0;font-size:0.8rem" placeholder="Motivo da falta..." value="'+reason+'" onblur="savePresenceReason('+i+',this.value)"></div>')+'</div>';
+}
+container.innerHTML=html;
+updatePresenceCount();
+});
+}
+function togglePresence(i){
+var cb=document.getElementById('pres-'+i);
+var updates={};
+updates['m'+i]=cb.checked;
+if(!cb.checked){
+updates['m'+i+'_reason']='';
+}
+dbRef.ref('presence').update(updates);
+}
+function savePresenceReason(i,reason){
+var updates={};
+updates['m'+i+'_reason']=reason;
+dbRef.ref('presence').update(updates);
+}
+function updatePresenceCount(){
+var count=0;
+for(var i=0;i<members.length;i++){
+var cb=document.getElementById('pres-'+i);
+if(cb&&cb.checked){count++;}
+}
+document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';
+}
+function savePresence(){alert('Presenca salva!');}
+
+function initCalendar(){
+var container=document.getElementById('cal-grid');
+var html='';
+for(var i=0;i<postTypes.length;i++){
+var post=postTypes[i];
+html+='<div class="cal-day" id="cal-'+i+'" onclick="togglePost('+i+')"><div style="font-weight:700;font-size:0.9rem">'+post.day+'</div><div class="type" style="color:var(--gray);font-size:0.8rem;margin-top:5px">'+post.type+'</div><div style="margin-top:8px;font-size:0.7rem;color:var(--gray)">Clique para marcar</div></div>';
+}
+container.innerHTML=html;
+dbRef.ref('posts').on('value',function(snapshot){
+var data=snapshot.val();
+var doneCount=0;
+for(var i=0;i<postTypes.length;i++){
+var done=data&&data['p'+i]?true:false;
+var el=document.getElementById('cal-'+i);
+if(done){el.classList.add('done');doneCount++;}
+else{el.classList.remove('done');}
+}
+document.getElementById('post-stats').textContent=doneCount+' de 7 concluidos';
+});
+}
+function togglePost(i){
+dbRef.ref('posts/p'+i).transaction(function(current){
+return !current;
+});
+}
+
 function initDeadline(){
 var saved=JSON.parse(localStorage.getItem('deadline')||'null');
 if(saved){updateDeadline(saved);}else{showDeadlineForm();}
@@ -582,11 +770,11 @@ var targetDate=new Date(parts[0],parts[1]-1,parts[2],23,59,59);
 var now=new Date();
 var diff=targetDate-now;
 if(dl.done){
-box.className='deadline-box done';countEl.className='deadline-count done';countEl.textContent='✅';textEl.textContent='Arte entregue!';dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';
+box.className='deadline-box done';countEl.className='deadline-count done';countEl.textContent='OK';textEl.textContent='Arte entregue!';dateDisp.textContent='Concluido em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';
 }else if(diff<=0){
-box.className='deadline-box urgent';countEl.className='deadline-count urgent';countEl.textContent='⚠️';textEl.textContent='ATRASADO!';dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');btnDone.style.display='block';btnDone.textContent='Entregar Agora';btnReset.style.display='inline-block';inputRow.style.display='none';
+box.className='deadline-box urgent';countEl.className='deadline-count urgent';countEl.textContent='!';textEl.textContent='ATRASADO!';dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');btnDone.style.display='block';btnDone.textContent='Entregar Agora';btnReset.style.display='inline-block';inputRow.style.display='none';
 }else{
-var days=Math.floor(diff/86400000);var hours=Math.floor((diff%86400000)/3600000);box.className='deadline-box';countEl.className='deadline-count';if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}countEl.textContent=days;if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';btnDone.style.display='block';btnDone.textContent='Concluído';btnReset.style.display='inline-block';inputRow.style.display='none';
+var days=Math.floor(diff/86400000);var hours=Math.floor((diff%86400000)/3600000);box.className='deadline-box';countEl.className='deadline-count';if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}countEl.textContent=days;if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' as 23:59';btnDone.style.display='block';btnDone.textContent='Concluido';btnReset.style.display='inline-block';inputRow.style.display='none';
 }
 }
 function markDone(){
@@ -598,22 +786,115 @@ updateDeadline(saved);
 }
 function resetDeadline(){localStorage.removeItem('deadline');showDeadlineForm();}
 setInterval(function(){var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(saved&&!saved.done){updateDeadline(saved);}},60000);
+
 function initHinos(){var saved=JSON.parse(localStorage.getItem('hinos')||'[]');renderHinos(saved);}
-function renderHinos(hinos){var container=document.getElementById('hinos-grid');document.getElementById('hino-count').textContent=hinos.length+' hinos';var html='';for(var i=0;i<hinos.length;i++){var h=hinos[i];var badge=h.kind==='file'?'<span class="hino-badge file">Arquivo</span>':'<span class="hino-badge link">Link</span>';var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';}html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">+</div><div>Adicionar Hino</div></div>';container.innerHTML=html;}
-function showHinoChoice(){var choice=confirm('OK = UPLOAD de arquivo\nCancelar = usar link');if(choice){document.getElementById('fileInput').click();}else{var name=prompt('Nome do hino:');if(!name)return;var link=prompt('Cole o link do Google Drive:');if(!link)return;var type=prompt('Tipo:','Vídeo com letra');if(!type)type='Vídeo com letra';var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}}
-document.getElementById('fileInput').addEventListener('change',function(e){var file=e.target.files[0];if(!file)return;var name=prompt('Nome do hino:','');if(!name){e.target.value='';return;}var type=prompt('Tipo:','Vídeo com letra');if(!type)type='Vídeo com letra';var hinoId='hino_'+Date.now();var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,type:type,icon:'🎵',kind:'file',hinoId:hinoId});localStorage.setItem('hinos',JSON.stringify(hinos));saveVideoToDb(hinoId,file,function(ok){if(ok){alert('"'+name+'" salvo!');}else{alert('Erro. Tente um arquivo menor.');}renderHinos(hinos);});e.target.value='';});
-function playHinoFile(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];getVideoFromDb(h.hinoId,function(blob){if(blob){var url=URL.createObjectURL(blob);document.getElementById('videoModalTitle').textContent='▶ '+h.name;var modal=document.getElementById('videoModal');modal.classList.add('active');document.getElementById('videoPlayer').src=url;}else{alert('Arquivo não encontrado.');}});}
+function renderHinos(hinos){
+var container=document.getElementById('hinos-grid');
+document.getElementById('hino-count').textContent=hinos.length+' hinos';
+var html='';
+for(var i=0;i<hinos.length;i++){
+var h=hinos[i];
+var badge=h.kind==='file'?'<span class="hino-badge file">Arquivo</span>':'<span class="hino-badge link">Link</span>';
+var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';
+html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';
+}
+html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">+</div><div>Adicionar Hino</div></div>';
+container.innerHTML=html;
+}
+function showHinoChoice(){
+var choice=confirm('OK = UPLOAD de arquivo\nCancelar = usar link');
+if(choice){document.getElementById('fileInput').click();}
+else{
+var name=prompt('Nome do hino:');if(!name)return;
+var link=prompt('Cole o link do Google Drive:');if(!link)return;
+var type=prompt('Tipo:','Video com letra');if(!type)type='Video com letra';
+var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
+hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});
+localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);
+}
+}
+document.getElementById('fileInput').addEventListener('change',function(e){
+var file=e.target.files[0];if(!file)return;
+var name=prompt('Nome do hino:','');if(!name){e.target.value='';return;}
+var type=prompt('Tipo:','Video com letra');if(!type)type='Video com letra';
+var hinoId='hino_'+Date.now();
+var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
+hinos.unshift({name:name,type:type,icon:'🎵',kind:'file',hinoId:hinoId});
+localStorage.setItem('hinos',JSON.stringify(hinos));
+saveVideoToDb(hinoId,file,function(ok){if(ok){alert('"'+name+'" salvo!');}else{alert('Erro. Tente um arquivo menor.');}renderHinos(hinos);});
+e.target.value='';
+});
+function playHinoFile(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];getVideoFromDb(h.hinoId,function(blob){if(blob){var url=URL.createObjectURL(blob);document.getElementById('videoModalTitle').textContent=h.name;document.getElementById('videoModal').classList.add('active');document.getElementById('videoPlayer').src=url;}else{alert('Arquivo nao encontrado.');}});}
 function playHinoLink(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];window.open(h.link,'_blank');}
 function closeVideoModal(){document.getElementById('videoModal').classList.remove('active');var vp=document.getElementById('videoPlayer');vp.pause();vp.src='';}
 function removeHino(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];if(h.kind==='file'&&h.hinoId){deleteVideoFromDb(h.hinoId,function(){});}hinos.splice(i,1);localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}
-function initRanking(){var container=document.getElementById('ranking-list');var ranking=[];for(var i=0;i<members.length;i++){ranking.push({name:members[i],posts:(i+1)*3});}ranking.sort(function(a,b){return b.posts-a.posts;});var html='';for(var i=0;i<ranking.length;i++){var item=ranking[i];var cls=i===0?'ranking-item top-rank':'ranking-item';var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'º';html+='<div class="'+cls+'"><span>'+medal+' <strong>'+item.name+'</strong></span><span style="color:var(--primary);font-weight:700">'+item.posts+' posts</span></div>';}container.innerHTML=html;}
-function initNotices(){var saved=JSON.parse(localStorage.getItem('notices')||'[]');renderNotices(saved);}
-function addNotice(){var text=document.getElementById('notice-text').value.trim();if(!text)return;var notices=JSON.parse(localStorage.getItem('notices')||'[]');notices.unshift({text:text,date:new Date().toLocaleDateString('pt-BR')});localStorage.setItem('notices',JSON.stringify(notices));document.getElementById('notice-text').value='';renderNotices(notices);}
-function renderNotices(notices){var container=document.getElementById('notice-list');if(notices.length===0){container.innerHTML='<p style="color:var(--gray);font-size:0.9rem">Nenhum aviso ainda.</p>';return;}var html='';for(var i=0;i<notices.length;i++){var n=notices[i];html+='<div class="notice-item"><div><strong>'+n.text+'</strong><br><small style="color:var(--gray)">'+n.date+'</small></div><button class="btn-action" onclick="removeNotice('+i+')" style="color:var(--red)">Excluir</button></div>';}container.innerHTML=html;}
-function removeNotice(i){var notices=JSON.parse(localStorage.getItem('notices')||'[]');notices.splice(i,1);localStorage.setItem('notices',JSON.stringify(notices));renderNotices(notices);}
-function initAll(){initMotivation();initBirthdays();initWeekResponsible();initArtResponsible();initScale();initDeadline();initPresence();initCalendar();initHinos();initRanking();initNotices();}
+
+function initRanking(){
+var container=document.getElementById('ranking-list');
+var ranking=[];
+for(var i=0;i<members.length;i++){ranking.push({name:members[i],posts:(i+1)*3});}
+ranking.sort(function(a,b){return b.posts-a.posts;});
+var html='';
+for(var i=0;i<ranking.length;i++){
+var item=ranking[i];
+var cls=i===0?'ranking-item top-rank':'ranking-item';
+var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'º';
+html+='<div class="'+cls+'"><span>'+medal+' <strong>'+item.name+'</strong></span><span style="color:var(--primary);font-weight:700">'+item.posts+' posts</span></div>';
+}
+container.innerHTML=html;
+}
+
+function initNotices(){
+dbRef.ref('notices').on('value',function(snapshot){
+var data=snapshot.val();
+var notices=[];
+if(data){
+var keys=Object.keys(data);
+for(var i=0;i<keys.length;i++){
+var n=data[keys[i]];
+n.id=keys[i];
+notices.push(n);
+}
+}
+notices.sort(function(a,b){return (b.timestamp||0)-(a.timestamp||0);});
+renderNotices(notices);
+});
+}
+function addNotice(){
+var text=document.getElementById('notice-text').value.trim();
+if(!text){return;}
+dbRef.ref('notices').push({text:text,date:new Date().toLocaleDateString('pt-BR'),timestamp:Date.now()});
+document.getElementById('notice-text').value='';
+}
+function renderNotices(notices){
+var container=document.getElementById('notice-list');
+if(notices.length===0){container.innerHTML='<p style="color:var(--gray);font-size:0.9rem">Nenhum aviso ainda.</p>';return;}
+var html='';
+for(var i=0;i<notices.length;i++){
+var n=notices[i];
+html+='<div class="notice-item"><div><strong>'+n.text+'</strong><br><small style="color:var(--gray)">'+n.date+'</small></div><button class="btn-action" onclick="removeNotice(\''+n.id+'\')" style="color:var(--red)">Excluir</button></div>';
+}
+container.innerHTML=html;
+}
+function removeNotice(id){dbRef.ref('notices/'+id).remove();}
+
+function initAll(){
+initMotivation();
+initBirthdays();
+initCultTheme();
+initWeekResponsible();
+initArtResponsible();
+initScale();
+initDeadline();
+initPresence();
+initCalendar();
+initHinos();
+initRanking();
+initNotices();
+}
 initDb();
 initBgIcons();
+initPWA();
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeVideoModal();}});
 </script>
 </body>
