@@ -216,14 +216,14 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <section>
 <div class="week-responsible">
 <div class="week-label">Responsável da Semana</div>
-<div class="week-name" id="week-name">—</div>
+<div class="week-name" id="week-name">Carregando...</div>
 <div class="week-role" id="week-role">—</div>
 <button class="btn-rotate" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateWeekResponsible()">Alterar Responsável</button>
 </div>
 <div class="art-responsible">
 <div class="art-label">Responsável pela Arte de Domingo</div>
-<div class="art-name" id="art-name">—</div>
-<div style="font-size:0.8rem;color:var(--gray)">Atualizado toda segunda-feira</div>
+<div class="art-name" id="art-name">Carregando...</div>
+<div style="font-size:0.8rem;color:var(--gray)">So muda quando clicar no botao</div>
 <button class="btn-green" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateArtResponsible()">Alterar Arte</button>
 </div>
 <div class="deadline-box" id="deadlineBox">
@@ -327,9 +327,6 @@ var motivations=[
 {text:'"Servi uns aos outros com o dom que cada um recebeu."',author:'1 Pedro 4:10'},
 {text:'"O trabalho da mídia leva a Palavra a quem não pode estar presente."',author:'Equipe ADMBG'}
 ];
-var weekOffset=0;
-var artOffset=0;
-var scaleOffset=0;
 var postDone=[false,false,false,false,false,false,false];
 var bgIcons=['📷','📱','📸','🎥','🎬','📹','📽️','📱','📷','📸'];
 var bdayFilterMonth='all';
@@ -346,8 +343,6 @@ function saveVideoToDb(id,blob,callback){if(!idb){callback(false);return;}var tx
 function getVideoFromDb(id,callback){if(!idb){callback(null);return;}var tx=idb.transaction(['videos'],'readonly');var store=tx.objectStore('videos');var req=store.get(id);req.onsuccess=function(e){if(e.target.result){callback(e.target.result.blob);}else{callback(null);}};req.onerror=function(){callback(null);};}
 function deleteVideoFromDb(id,callback){if(!idb){callback();return;}var tx=idb.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');store.delete(id);tx.oncomplete=function(){callback();};}
 function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i<12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
-function getWeekNumber(d){var date=new Date(d);date.setHours(0,0,0,0);date.setDate(date.getDate()+3-(date.getDay()+6)%7);var week1=new Date(date.getFullYear(),0,4);return 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7);}
-function getWeekOffset(){var weekNum=getWeekNumber(new Date());var baseWeek=32;return ((weekNum-baseWeek)%members.length+members.length)%members.length;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
 
 function initBdayDayOptions(){
@@ -474,15 +469,76 @@ if(!confirm('Excluir este aniversariante?')){return;}
 dbRef.ref('birthdays/'+id).remove();
 }
 
-function initWeekResponsible(){var offset=(getWeekOffset()+weekOffset)%members.length;var responsible=members[offset];var role=roles[offset%roles.length];document.getElementById('week-name').textContent=responsible;document.getElementById('week-role').textContent='Função: '+role.name;}
-function rotateWeekResponsible(){weekOffset++;initWeekResponsible();initScale();}
-function initArtResponsible(){var offset=(getWeekOffset()+artOffset)%members.length;var artPerson=members[offset];document.getElementById('art-name').textContent=artPerson;}
-function rotateArtResponsible(){artOffset++;initArtResponsible();initScale();}
+function initWeekResponsible(){
+dbRef.ref('config/weekIndex').on('value',function(snapshot){
+var idx=snapshot.val();
+if(idx===null){idx=0;dbRef.ref('config/weekIndex').set(0);}
+idx=((idx%members.length)+members.length)%members.length;
+var responsible=members[idx];
+var role=roles[idx%roles.length];
+document.getElementById('week-name').textContent=responsible;
+document.getElementById('week-role').textContent='Função: '+role.name;
+window.weekIdx=idx;
+renderScale();
+});
+}
+function rotateWeekResponsible(){
+var newIdx=((window.weekIdx||0)+1)%members.length;
+dbRef.ref('config/weekIndex').set(newIdx);
+}
+function initArtResponsible(){
+dbRef.ref('config/artIndex').on('value',function(snapshot){
+var idx=snapshot.val();
+if(idx===null){idx=0;dbRef.ref('config/artIndex').set(0);}
+idx=((idx%members.length)+members.length)%members.length;
+var artPerson=members[idx];
+document.getElementById('art-name').textContent=artPerson;
+window.artIdx=idx;
+renderScale();
+});
+}
+function rotateArtResponsible(){
+var newIdx=((window.artIdx||0)+1)%members.length;
+dbRef.ref('config/artIndex').set(newIdx);
+}
+
 function login(){var pass=document.getElementById('pass').value;if(pass===PASSWORD){document.getElementById('login-screen').style.display='none';document.getElementById('portal').style.display='block';initAll();}else{alert('Senha incorreta!');}}
 function logout(){document.getElementById('portal').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('pass').value='';}
-function initScale(){renderScale();}
-function renderScale(){var container=document.getElementById('scale-container');var artOffsetVal=(getWeekOffset()+artOffset)%members.length;var artPerson=members[artOffsetVal];var html='';var roleIdx=0;for(var i=0;i<members.length;i++){var member=members[i];if(member===artPerson){html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">🎨 Arte de Domingo</div><div class="role-detail">Responsável pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';}else{var r=roles[(roleIdx+scaleOffset)%roles.length];roleIdx++;html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--white);font-size:0.9rem">'+r.name+'</div><div class="role-detail">'+r.detail+'</div></div><span class="status-badge bg-ok">Confirmado</span></div>';}}container.innerHTML=html;document.getElementById('last-update').textContent='Última atualização: '+new Date().toLocaleString('pt-BR');}
-function rotateScale(){scaleOffset++;renderScale();}
+
+function initScale(){
+dbRef.ref('config/scaleOffset').on('value',function(snapshot){
+var off=snapshot.val();
+if(off===null){off=0;dbRef.ref('config/scaleOffset').set(0);}
+window.scaleOff=off;
+renderScale();
+});
+}
+function renderScale(){
+var container=document.getElementById('scale-container');
+if(container===null){return;}
+var artIdx=window.artIdx||0;
+var weekIdx=window.weekIdx||0;
+var scaleOff=window.scaleOff||0;
+var artPerson=members[artIdx];
+var html='';
+var roleIdx=0;
+for(var i=0;i<members.length;i++){
+var member=members[i];
+if(member===artPerson){
+html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">🎨 Arte de Domingo</div><div class="role-detail">Responsável pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
+}else{
+var r=roles[(roleIdx+scaleOff)%roles.length];
+roleIdx++;
+html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--white);font-size:0.9rem">'+r.name+'</div><div class="role-detail">'+r.detail+'</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
+}
+}
+container.innerHTML=html;
+document.getElementById('last-update').textContent='Última atualização: '+new Date().toLocaleString('pt-BR');
+}
+function rotateScale(){
+var newOff=((window.scaleOff||0)+1)%roles.length;
+dbRef.ref('config/scaleOffset').set(newOff);
+}
 function initPresence(){var container=document.getElementById('presence-list');var html='';for(var i=0;i<members.length;i++){var member=members[i];html+='<div class="presence-item"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">'+member+'</span><input type="checkbox" id="pres-'+i+'" onchange="updatePresence()" style="width:20px;height:20px;cursor:pointer"></div><div class="absent-fields" id="absent-'+i+'"><input type="text" class="login-input" style="margin:0;font-size:0.8rem" placeholder="Motivo da falta..."></div></div>';}container.innerHTML=html;}
 function updatePresence(){var count=0;for(var i=0;i<members.length;i++){var cb=document.getElementById('pres-'+i);var absent=document.getElementById('absent-'+i);if(cb.checked){count++;absent.style.display='none';}else{absent.style.display='block';}}document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';}
 function savePresence(){alert('Presença salva com sucesso!');}
@@ -550,12 +606,12 @@ function playHinoFile(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]
 function playHinoLink(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];window.open(h.link,'_blank');}
 function closeVideoModal(){document.getElementById('videoModal').classList.remove('active');var vp=document.getElementById('videoPlayer');vp.pause();vp.src='';}
 function removeHino(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];if(h.kind==='file'&&h.hinoId){deleteVideoFromDb(h.hinoId,function(){});}hinos.splice(i,1);localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}
-function initRanking(){var container=document.getElementById('ranking-list');var ranking=[];for(var i=0;i<members.length;i++){ranking.push({name:members[i],posts:Math.floor(Math.random()*15)+1});}ranking.sort(function(a,b){return b.posts-a.posts;});var html='';for(var i=0;i<ranking.length;i++){var item=ranking[i];var cls=i===0?'ranking-item top-rank':'ranking-item';var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'º';html+='<div class="'+cls+'"><span>'+medal+' <strong>'+item.name+'</strong></span><span style="color:var(--primary);font-weight:700">'+item.posts+' posts</span></div>';}container.innerHTML=html;}
+function initRanking(){var container=document.getElementById('ranking-list');var ranking=[];for(var i=0;i<members.length;i++){ranking.push({name:members[i],posts:(i+1)*3});}ranking.sort(function(a,b){return b.posts-a.posts;});var html='';for(var i=0;i<ranking.length;i++){var item=ranking[i];var cls=i===0?'ranking-item top-rank':'ranking-item';var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'º';html+='<div class="'+cls+'"><span>'+medal+' <strong>'+item.name+'</strong></span><span style="color:var(--primary);font-weight:700">'+item.posts+' posts</span></div>';}container.innerHTML=html;}
 function initNotices(){var saved=JSON.parse(localStorage.getItem('notices')||'[]');renderNotices(saved);}
 function addNotice(){var text=document.getElementById('notice-text').value.trim();if(!text)return;var notices=JSON.parse(localStorage.getItem('notices')||'[]');notices.unshift({text:text,date:new Date().toLocaleDateString('pt-BR')});localStorage.setItem('notices',JSON.stringify(notices));document.getElementById('notice-text').value='';renderNotices(notices);}
 function renderNotices(notices){var container=document.getElementById('notice-list');if(notices.length===0){container.innerHTML='<p style="color:var(--gray);font-size:0.9rem">Nenhum aviso ainda.</p>';return;}var html='';for(var i=0;i<notices.length;i++){var n=notices[i];html+='<div class="notice-item"><div><strong>'+n.text+'</strong><br><small style="color:var(--gray)">'+n.date+'</small></div><button class="btn-action" onclick="removeNotice('+i+')" style="color:var(--red)">Excluir</button></div>';}container.innerHTML=html;}
 function removeNotice(i){var notices=JSON.parse(localStorage.getItem('notices')||'[]');notices.splice(i,1);localStorage.setItem('notices',JSON.stringify(notices));renderNotices(notices);}
-function initAll(){initMotivation();initBirthdays();initWeekResponsible();initArtResponsible();initDeadline();initScale();initPresence();initCalendar();initHinos();initRanking();initNotices();}
+function initAll(){initMotivation();initBirthdays();initWeekResponsible();initArtResponsible();initScale();initDeadline();initPresence();initCalendar();initHinos();initRanking();initNotices();}
 initDb();
 initBgIcons();
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeVideoModal();}});
