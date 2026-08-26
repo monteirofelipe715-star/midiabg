@@ -116,6 +116,8 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .btn-green{background:var(--green);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
 .btn-print{background:var(--gray-light);color:var(--white);padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
 .btn-print:hover{background:var(--primary)}
+.btn-download{background:var(--green);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
+.btn-download:hover{background:#00B845}
 .scale-btns{display:flex;gap:10px;flex-wrap:wrap}
 .presence-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
 .presence-item{display:flex;flex-direction:column;gap:10px}
@@ -288,7 +290,8 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div class="section-header">
 <h2>Escala de Domingo</h2>
 <div class="scale-btns">
-<button class="btn-print" onclick="exportScale()">Exportar</button>
+<button class="btn-download" onclick="downloadScale()">Baixar</button>
+<button class="btn-print" onclick="exportScale()">Imprimir</button>
 <button class="btn-rotate" onclick="rotateScale()">Gerar Nova Escala</button>
 </div>
 </div>
@@ -348,7 +351,6 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 var firebaseConfig={apiKey:"AIzaSyD706P3qlGfsqQLBC04YbaE_RiBszOVJyU",authDomain:"portal-midia-admbg.firebaseapp.com",databaseURL:"https://portal-midia-admbg-default-rtdb.firebaseio.com",projectId:"portal-midia-admbg",storageBucket:"portal-midia-admbg.firebasestorage.app",messagingSenderId:"574023708398",appId:"1:574023708398:web:6a89afbc48f20bdb390dff"};
 firebase.initializeApp(firebaseConfig);
 var dbRef=firebase.database();
-
 var PASSWORD='midia2026';
 var members=['Sara','Gabriela','Kauane','Eva'];
 var monthNames=['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -382,519 +384,72 @@ var bdayFilterMonth='all';
 var bdayEditId=null;
 var idb=null;
 var deferredPrompt=null;
-
-function initDb(){
-var request=indexedDB.open('MidiabgDB',1);
-request.onupgradeneeded=function(e){idb=e.target.result;if(!idb.objectStoreNames.contains('videos')){idb.createObjectStore('videos',{keyPath:'id'});}};
-request.onsuccess=function(e){idb=e.target.result;};
-request.onerror=function(e){console.log('Erro DB:'+e.target.error);};
-}
+function initDb(){var request=indexedDB.open('MidiabgDB',1);request.onupgradeneeded=function(e){idb=e.target.result;if(!idb.objectStoreNames.contains('videos')){idb.createObjectStore('videos',{keyPath:'id'});}};request.onsuccess=function(e){idb=e.target.result;};request.onerror=function(e){console.log('Erro DB:'+e.target.error);};}
 function saveVideoToDb(id,blob,callback){if(!idb){callback(false);return;}var tx=idb.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');var req=store.put({id:id,blob:blob});req.onsuccess=function(){callback(true);};req.onerror=function(){callback(false);};}
 function getVideoFromDb(id,callback){if(!idb){callback(null);return;}var tx=idb.transaction(['videos'],'readonly');var store=tx.objectStore('videos');var req=store.get(id);req.onsuccess=function(e){if(e.target.result){callback(e.target.result.blob);}else{callback(null);}};req.onerror=function(){callback(null);};}
 function deleteVideoFromDb(id,callback){if(!idb){callback();return;}var tx=idb.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');store.delete(id);tx.oncomplete=function(){callback();};}
 function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i<12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
-
-function initPWA(){
-window.addEventListener('beforeinstallprompt',function(e){
-e.preventDefault();
-deferredPrompt=e;
-document.getElementById('pwaInstall').classList.add('show');
-});
-}
-function installPWA(){
-if(deferredPrompt){
-deferredPrompt.prompt();
-deferredPrompt.userChoice.then(function(){
-deferredPrompt=null;
-document.getElementById('pwaInstall').classList.remove('show');
-});
-}
-}
-
-function initBdayDayOptions(){
-var sel=document.getElementById('bdayDayInput');
-for(var i=1;i<=31;i++){
-var opt=document.createElement('option');
-opt.value=i;opt.textContent=i;
-sel.appendChild(opt);
-}
-}
-function initBirthdays(){
-initBdayDayOptions();
-dbRef.ref('birthdays').on('value',function(snapshot){
-var data=snapshot.val();
-var bdays=[];
-if(data){
-var keys=Object.keys(data);
-for(var i=0;i<keys.length;i++){var b=data[keys[i]];b.id=keys[i];bdays.push(b);}
-}
-window.bdaysCache=bdays;
-renderBdayMonthTabs();
-renderBirthdays();
-});
-}
-function renderBdayMonthTabs(){
-var bdays=window.bdaysCache||[];
-var now=new Date();
-var currentMonth=now.getMonth();
-var container=document.getElementById('bdayMonthTabs');
-var html='<div class="bday-month-tab '+(bdayFilterMonth==='all'?'active':'')+'" onclick="setBdayFilter(\'all\',this)">Todos ('+bdays.length+')</div>';
-for(var m=0;m<12;m++){
-var count=bdays.filter(function(b){return b.month===m;}).length;
-var cls='';
-if(bdayFilterMonth==m){cls=' active';}
-if(count>0){cls+=' has-bday';}
-html+='<div class="bday-month-tab'+cls+'" onclick="setBdayFilter('+m+',this)">'+monthShort[m]+(count>0?' ('+count+')':'')+'</div>';
-}
-container.innerHTML=html;
-}
-function setBdayFilter(month,el){
-bdayFilterMonth=month;
-var tabs=document.querySelectorAll('.bday-month-tab');
-for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('active');}
-el.classList.add('active');
-renderBirthdays();
-}
-function renderBirthdays(){
-var bdays=window.bdaysCache||[];
-var now=new Date();
-var currentMonth=now.getMonth();
-var currentDay=now.getDate();
-document.getElementById('bdayTotalCount').textContent=bdays.length+' cadastrados';
-var filtered=bdays;
-if(bdayFilterMonth!=='all'){filtered=bdays.filter(function(b){return b.month===bdayFilterMonth;});}
-filtered.sort(function(a,b){
-if(bdayFilterMonth==='all'){if(a.month!==b.month){return a.month-b.month;}return a.day-b.day;}
-return a.day-b.day;
-});
-var grid=document.getElementById('bdayGrid');
-if(filtered.length===0){grid.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum aniversariante cadastrado.</p>';return;}
-var html='';
-for(var i=0;i<filtered.length;i++){
-var b=filtered[i];
-var isThisMonth=b.month===currentMonth;
-var isToday=isThisMonth&&b.day===currentDay;
-var cls='';var badge='';
-if(isToday){cls=' today';badge='<span class="bday-badge today">HOJE!</span>';}
-else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">Este mes</span>';}
-var dateStr=b.day+' de '+monthNames[b.month];
-html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'<div class="bday-actions"><button class="bday-edit" onclick="editBday(\''+b.id+'\')">Editar</button><button class="bday-del" onclick="deleteBday(\''+b.id+'\')">Excluir</button></div></div>';
-}
-grid.innerHTML=html;
-}
-function toggleBdayForm(){
-var form=document.getElementById('bdayForm');
-if(form.classList.contains('active')){
-form.classList.remove('active');bdayEditId=null;
-document.getElementById('bdayNameInput').value='';document.getElementById('bdayDayInput').value='';document.getElementById('bdayMonthInput').value='';
-document.getElementById('bdayFormTitle').textContent='Novo Aniversariante';
-}else{form.classList.add('active');document.getElementById('bdayNameInput').focus();}
-}
-function saveBday(){
-var name=document.getElementById('bdayNameInput').value.trim();
-var day=parseInt(document.getElementById('bdayDayInput').value);
-var month=parseInt(document.getElementById('bdayMonthInput').value);
-if(!name){alert('Digite o nome!');return;}
-if(!day||day<1||day>31){alert('Selecione o dia!');return;}
-if(isNaN(month)||month<0||month>11){alert('Selecione o mes!');return;}
-if(bdayEditId){dbRef.ref('birthdays/'+bdayEditId).update({name:name,day:day,month:month});}
-else{dbRef.ref('birthdays').push({name:name,day:day,month:month});}
-toggleBdayForm();
-}
-function editBday(id){
-var bdays=window.bdaysCache||[];var b=null;
-for(var i=0;i<bdays.length;i++){if(bdays[i].id===id){b=bdays[i];break;}}
-if(!b){return;}
-bdayEditId=id;
-document.getElementById('bdayFormTitle').textContent='Editar: '+b.name;
-document.getElementById('bdayNameInput').value=b.name;
-document.getElementById('bdayDayInput').value=b.day;
-document.getElementById('bdayMonthInput').value=b.month;
-document.getElementById('bdayForm').classList.add('active');
-document.getElementById('bdayNameInput').focus();
-}
+function initPWA(){window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('pwaInstall').classList.add('show');});}
+function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('pwaInstall').classList.remove('show');});}}
+function initBdayDayOptions(){var sel=document.getElementById('bdayDayInput');for(var i=1;i<=31;i++){var opt=document.createElement('option');opt.value=i;opt.textContent=i;sel.appendChild(opt);}}
+function initBirthdays(){initBdayDayOptions();dbRef.ref('birthdays').on('value',function(snapshot){var data=snapshot.val();var bdays=[];if(data){var keys=Object.keys(data);for(var i=0;i<keys.length;i++){var b=data[keys[i]];b.id=keys[i];bdays.push(b);}}window.bdaysCache=bdays;renderBdayMonthTabs();renderBirthdays();});}
+function renderBdayMonthTabs(){var bdays=window.bdaysCache||[];var now=new Date();var currentMonth=now.getMonth();var container=document.getElementById('bdayMonthTabs');var html='<div class="bday-month-tab '+(bdayFilterMonth==='all'?'active':'')+'" onclick="setBdayFilter(\'all\',this)">Todos ('+bdays.length+')</div>';for(var m=0;m<12;m++){var count=bdays.filter(function(b){return b.month===m;}).length;var cls='';if(bdayFilterMonth==m){cls=' active';}if(count>0){cls+=' has-bday';}html+='<div class="bday-month-tab'+cls+'" onclick="setBdayFilter('+m+',this)">'+monthShort[m]+(count>0?' ('+count+')':'')+'</div>';}container.innerHTML=html;}
+function setBdayFilter(month,el){bdayFilterMonth=month;var tabs=document.querySelectorAll('.bday-month-tab');for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('active');}el.classList.add('active');renderBirthdays();}
+function renderBirthdays(){var bdays=window.bdaysCache||[];var now=new Date();var currentMonth=now.getMonth();var currentDay=now.getDate();document.getElementById('bdayTotalCount').textContent=bdays.length+' cadastrados';var filtered=bdays;if(bdayFilterMonth!=='all'){filtered=bdays.filter(function(b){return b.month===bdayFilterMonth;});}filtered.sort(function(a,b){if(bdayFilterMonth==='all'){if(a.month!==b.month){return a.month-b.month;}return a.day-b.day;}return a.day-b.day;});var grid=document.getElementById('bdayGrid');if(filtered.length===0){grid.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum aniversariante cadastrado.</p>';return;}var html='';for(var i=0;i<filtered.length;i++){var b=filtered[i];var isThisMonth=b.month===currentMonth;var isToday=isThisMonth&&b.day===currentDay;var cls='';var badge='';if(isToday){cls=' today';badge='<span class="bday-badge today">HOJE!</span>';}else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">Este mes</span>';}var dateStr=b.day+' de '+monthNames[b.month];html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'<div class="bday-actions"><button class="bday-edit" onclick="editBday(\''+b.id+'\')">Editar</button><button class="bday-del" onclick="deleteBday(\''+b.id+'\')">Excluir</button></div></div>';}grid.innerHTML=html;}
+function toggleBdayForm(){var form=document.getElementById('bdayForm');if(form.classList.contains('active')){form.classList.remove('active');bdayEditId=null;document.getElementById('bdayNameInput').value='';document.getElementById('bdayDayInput').value='';document.getElementById('bdayMonthInput').value='';document.getElementById('bdayFormTitle').textContent='Novo Aniversariante';}else{form.classList.add('active');document.getElementById('bdayNameInput').focus();}}
+function saveBday(){var name=document.getElementById('bdayNameInput').value.trim();var day=parseInt(document.getElementById('bdayDayInput').value);var month=parseInt(document.getElementById('bdayMonthInput').value);if(!name){alert('Digite o nome!');return;}if(!day||day<1||day>31){alert('Selecione o dia!');return;}if(isNaN(month)||month<0||month>11){alert('Selecione o mes!');return;}if(bdayEditId){dbRef.ref('birthdays/'+bdayEditId).update({name:name,day:day,month:month});}else{dbRef.ref('birthdays').push({name:name,day:day,month:month});}toggleBdayForm();}
+function editBday(id){var bdays=window.bdaysCache||[];var b=null;for(var i=0;i<bdays.length;i++){if(bdays[i].id===id){b=bdays[i];break;}}if(!b){return;}bdayEditId=id;document.getElementById('bdayFormTitle').textContent='Editar: '+b.name;document.getElementById('bdayNameInput').value=b.name;document.getElementById('bdayDayInput').value=b.day;document.getElementById('bdayMonthInput').value=b.month;document.getElementById('bdayForm').classList.add('active');document.getElementById('bdayNameInput').focus();}
 function deleteBday(id){if(!confirm('Excluir este aniversariante?')){return;}dbRef.ref('birthdays/'+id).remove();}
-
-function initCultTheme(){
-dbRef.ref('cultTheme').on('value',function(snapshot){
-var data=snapshot.val();
-if(data&&data.theme){
-document.getElementById('cultThemeDisplay').textContent=data.theme;
-document.getElementById('cultThemeInput').value='';
-}else{
-document.getElementById('cultThemeDisplay').textContent='Sem tema definido';
-}
-renderCultHinos(data&&data.hinos?data.hinos:[]);
-renderCultProgram(data&&data.program?data.program:[]);
-});
-}
-function saveCultTheme(){
-var theme=document.getElementById('cultThemeInput').value.trim();
-if(!theme){return;}
-dbRef.ref('cultTheme/theme').set(theme);
-}
-function renderCultHinos(hinos){
-var list=document.getElementById('cultHinosList');
-var html='';
-for(var i=0;i<hinos.length;i++){
-html+='<div class="cult-item"><span class="cult-item-text">🎵 '+hinos[i]+'</span><button class="cult-item-del" onclick="delCultHino('+i+')">X</button></div>';
-}
-list.innerHTML=html;
-}
-function addCultHino(){
-var input=document.getElementById('cultHinoInput');
-var hino=input.value.trim();
-if(!hino){return;}
-dbRef.ref('cultTheme/hinos').transaction(function(current){
-if(!current){return [hino];}
-current.push(hino);return current;
-});
-input.value='';
-}
-function delCultHino(index){
-dbRef.ref('cultTheme/hinos').transaction(function(current){
-if(!current){return [];}
-current.splice(index,1);return current;
-});
-}
-function renderCultProgram(program){
-var list=document.getElementById('cultProgramList');
-var html='';
-for(var i=0;i<program.length;i++){
-html+='<div class="cult-item"><span class="cult-item-text">'+(i+1)+'. '+program[i]+'</span><button class="cult-item-del" onclick="delCultProgram('+i+')">X</button></div>';
-}
-list.innerHTML=html;
-}
-function addCultProgram(){
-var input=document.getElementById('cultProgramInput');
-var item=input.value.trim();
-if(!item){return;}
-dbRef.ref('cultTheme/program').transaction(function(current){
-if(!current){return [item];}
-current.push(item);return current;
-});
-input.value='';
-}
-function delCultProgram(index){
-dbRef.ref('cultTheme/program').transaction(function(current){
-if(!current){return [];}
-current.splice(index,1);return current;
-});
-}
-
-function initWeekResponsible(){
-dbRef.ref('config/weekIndex').on('value',function(snapshot){
-var idx=snapshot.val();
-if(idx===null){idx=0;dbRef.ref('config/weekIndex').set(0);}
-idx=((idx%members.length)+members.length)%members.length;
-var responsible=members[idx];
-var role=roles[idx%roles.length];
-document.getElementById('week-name').textContent=responsible;
-document.getElementById('week-role').textContent='Funcao: '+role.name;
-window.weekIdx=idx;
-renderScale();
-});
-}
+function initCultTheme(){dbRef.ref('cultTheme').on('value',function(snapshot){var data=snapshot.val();if(data&&data.theme){document.getElementById('cultThemeDisplay').textContent=data.theme;document.getElementById('cultThemeInput').value='';}else{document.getElementById('cultThemeDisplay').textContent='Sem tema definido';}renderCultHinos(data&&data.hinos?data.hinos:[]);renderCultProgram(data&&data.program?data.program:[]);});}
+function saveCultTheme(){var theme=document.getElementById('cultThemeInput').value.trim();if(!theme){return;}dbRef.ref('cultTheme/theme').set(theme);}
+function renderCultHinos(hinos){var list=document.getElementById('cultHinosList');var html='';for(var i=0;i<hinos.length;i++){html+='<div class="cult-item"><span class="cult-item-text">🎵 '+hinos[i]+'</span><button class="cult-item-del" onclick="delCultHino('+i+')">X</button></div>';}list.innerHTML=html;}
+function addCultHino(){var input=document.getElementById('cultHinoInput');var hino=input.value.trim();if(!hino){return;}dbRef.ref('cultTheme/hinos').transaction(function(current){if(!current){return [hino];}current.push(hino);return current;});input.value='';}
+function delCultHino(index){dbRef.ref('cultTheme/hinos').transaction(function(current){if(!current){return [];}current.splice(index,1);return current;});}
+function renderCultProgram(program){var list=document.getElementById('cultProgramList');var html='';for(var i=0;i<program.length;i++){html+='<div class="cult-item"><span class="cult-item-text">'+(i+1)+'. '+program[i]+'</span><button class="cult-item-del" onclick="delCultProgram('+i+')">X</button></div>';}list.innerHTML=html;}
+function addCultProgram(){var input=document.getElementById('cultProgramInput');var item=input.value.trim();if(!item){return;}dbRef.ref('cultTheme/program').transaction(function(current){if(!current){return [item];}current.push(item);return current;});input.value='';}
+function delCultProgram(index){dbRef.ref('cultTheme/program').transaction(function(current){if(!current){return [];}current.splice(index,1);return current;});}
+function initWeekResponsible(){dbRef.ref('config/weekIndex').on('value',function(snapshot){var idx=snapshot.val();if(idx===null){idx=0;dbRef.ref('config/weekIndex').set(0);}idx=((idx%members.length)+members.length)%members.length;var responsible=members[idx];var role=roles[idx%roles.length];document.getElementById('week-name').textContent=responsible;document.getElementById('week-role').textContent='Funcao: '+role.name;window.weekIdx=idx;renderScale();});}
 function rotateWeekResponsible(){var newIdx=((window.weekIdx||0)+1)%members.length;dbRef.ref('config/weekIndex').set(newIdx);}
-function initArtResponsible(){
-dbRef.ref('config/artIndex').on('value',function(snapshot){
-var idx=snapshot.val();
-if(idx===null){idx=0;dbRef.ref('config/artIndex').set(0);}
-idx=((idx%members.length)+members.length)%members.length;
-document.getElementById('art-name').textContent=members[idx];
-window.artIdx=idx;
-renderScale();
-});
-}
+function initArtResponsible(){dbRef.ref('config/artIndex').on('value',function(snapshot){var idx=snapshot.val();if(idx===null){idx=0;dbRef.ref('config/artIndex').set(0);}idx=((idx%members.length)+members.length)%members.length;document.getElementById('art-name').textContent=members[idx];window.artIdx=idx;renderScale();});}
 function rotateArtResponsible(){var newIdx=((window.artIdx||0)+1)%members.length;dbRef.ref('config/artIndex').set(newIdx);}
 function login(){var pass=document.getElementById('pass').value;if(pass===PASSWORD){document.getElementById('login-screen').style.display='none';document.getElementById('portal').style.display='block';initAll();}else{alert('Senha incorreta!');}}
 function logout(){document.getElementById('portal').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('pass').value='';}
-
-function initScale(){
-dbRef.ref('config/scaleOffset').on('value',function(snapshot){
-var off=snapshot.val();
-if(off===null){off=0;dbRef.ref('config/scaleOffset').set(0);}
-window.scaleOff=off;
-renderScale();
-});
-}
-function renderScale(){
-var container=document.getElementById('scale-container');
-if(!container){return;}
-var artIdx=window.artIdx||0;
-var scaleOff=window.scaleOff||0;
-var artPerson=members[artIdx];
-var html='';var roleIdx=0;
-for(var i=0;i<members.length;i++){
-var member=members[i];
-if(member===artPerson){
-html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">Arte de Domingo</div><div class="role-detail">Responsavel pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
-}else{
-var r=roles[(roleIdx+scaleOff)%roles.length];
-roleIdx++;
-html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--white);font-size:0.9rem">'+r.name+'</div><div class="role-detail">'+r.detail+'</div></div><span class="status-badge bg-ok">Confirmado</span></div>';
-}
-}
-container.innerHTML=html;
-document.getElementById('last-update').textContent='Ultima atualizacao: '+new Date().toLocaleString('pt-BR');
-}
+function initScale(){dbRef.ref('config/scaleOffset').on('value',function(snapshot){var off=snapshot.val();if(off===null){off=0;dbRef.ref('config/scaleOffset').set(0);}window.scaleOff=off;renderScale();});}
+function renderScale(){var container=document.getElementById('scale-container');if(!container){return;}var artIdx=window.artIdx||0;var scaleOff=window.scaleOff||0;var artPerson=members[artIdx];var html='';var roleIdx=0;for(var i=0;i<members.length;i++){var member=members[i];if(member===artPerson){html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--green);font-size:0.9rem">Arte de Domingo</div><div class="role-detail">Responsavel pela arte da semana</div></div><span class="status-badge bg-ok">Confirmado</span></div>';}else{var r=roles[(roleIdx+scaleOff)%roles.length];roleIdx++;html+='<div class="scale-row"><span style="font-weight:600">'+member+'</span><div><div style="color:var(--white);font-size:0.9rem">'+r.name+'</div><div class="role-detail">'+r.detail+'</div></div><span class="status-badge bg-ok">Confirmado</span></div>';}}container.innerHTML=html;document.getElementById('last-update').textContent='Ultima atualizacao: '+new Date().toLocaleString('pt-BR');}
 function rotateScale(){var newOff=((window.scaleOff||0)+1)%roles.length;dbRef.ref('config/scaleOffset').set(newOff);}
-function exportScale(){
-var win=window.open('','_blank');
-var html='<html><head><title>Escala de Domingo - ADMBG</title><style>body{font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000}h1{text-align:center;color:#FF6B00}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:12px;text-align:left}th{background:#FF6B00;color:#fff}.art{background:#e8f5e9;font-weight:bold}p{text-align:center;color:#666;margin-top:20px}</style></head><body>';
-html+='<h1>AD Madureira - Bento Goncalves/RS</h1>';
-html+='<h2 style="text-align:center">Escala de Domingo</h2>';
-html+='<table><tr><th>Membro</th><th>Funcao</th></tr>';
-var artIdx=window.artIdx||0;
-var scaleOff=window.scaleOff||0;
-var artPerson=members[artIdx];
-var roleIdx=0;
-for(var i=0;i<members.length;i++){
-var member=members[i];
-if(member===artPerson){
-html+='<tr class="art"><td>'+member+'</td><td>Arte de Domingo</td></tr>';
-}else{
-var r=roles[(roleIdx+scaleOff)%roles.length];
-roleIdx++;
-html+='<tr><td>'+member+'</td><td>'+r.name+'</td></tr>';
-}
-}
-html+='</table>';
-html+='<p>Escala gerada em '+new Date().toLocaleString('pt-BR')+'</p>';
-html+='<p>Pr. Presidente Gideon Barros</p>';
-html+='</body></html>';
-win.document.write(html);
-win.document.close();
-setTimeout(function(){win.print();},500);
-}
-
-function initPresence(){
-dbRef.ref('presence').on('value',function(snapshot){
-var data=snapshot.val();
-var container=document.getElementById('presence-list');
-var html='';
-for(var i=0;i<members.length;i++){
-var present=data&&data['m'+i]?true:false;
-var reason=data&&data['m'+i+'_reason']?data['m'+i+'_reason']:'';
-html+='<div class="presence-item"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">'+members[i]+'</span><input type="checkbox" id="pres-'+i+'" onchange="togglePresence('+i+')" '+(present?'checked':'')+' style="width:20px;height:20px;cursor:pointer"></div>'+(present?'':'<div class="absent-fields" style="display:block;margin-top:5px"><input type="text" class="login-input" style="margin:0;font-size:0.8rem" placeholder="Motivo da falta..." value="'+reason+'" onblur="savePresenceReason('+i+',this.value)"></div>')+'</div>';
-}
-container.innerHTML=html;
-updatePresenceCount();
-});
-}
-function togglePresence(i){
-var cb=document.getElementById('pres-'+i);
-var updates={};
-updates['m'+i]=cb.checked;
-if(!cb.checked){
-updates['m'+i+'_reason']='';
-}
-dbRef.ref('presence').update(updates);
-}
-function savePresenceReason(i,reason){
-var updates={};
-updates['m'+i+'_reason']=reason;
-dbRef.ref('presence').update(updates);
-}
-function updatePresenceCount(){
-var count=0;
-for(var i=0;i<members.length;i++){
-var cb=document.getElementById('pres-'+i);
-if(cb&&cb.checked){count++;}
-}
-document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';
-}
+function getScaleHTML(){var artIdx=window.artIdx||0;var scaleOff=window.scaleOff||0;var artPerson=members[artIdx];var rows='';var roleIdx=0;for(var i=0;i<members.length;i++){var member=members[i];if(member===artPerson){rows+='<tr class="art"><td>'+member+'</td><td>Arte de Domingo</td></tr>';}else{var r=roles[(roleIdx+scaleOff)%roles.length];roleIdx++;rows+='<tr><td>'+member+'</td><td>'+r.name+'</td></tr>';}}return rows;}
+function exportScale(){var win=window.open('','_blank');var html='<html><head><title>Escala de Domingo - ADMBG</title><style>body{font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000}h1{text-align:center;color:#FF6B00}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:12px;text-align:left}th{background:#FF6B00;color:#fff}.art{background:#e8f5e9;font-weight:bold}p{text-align:center;color:#666;margin-top:20px}</style></head><body>';html+='<h1>AD Madureira - Bento Goncalves/RS</h1>';html+='<h2 style="text-align:center">Escala de Domingo</h2>';html+='<table><tr><th>Membro</th><th>Funcao</th></tr>'+getScaleHTML()+'</table>';html+='<p>Escala gerada em '+new Date().toLocaleString('pt-BR')+'</p>';html+='<p>Pr. Presidente Gideon Barros</p>';html+='</body></html>';win.document.write(html);win.document.close();setTimeout(function(){win.print();},500);}
+function downloadScale(){var rows=getScaleHTML();var dateStr=new Date().toLocaleDateString('pt-BR');var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Escala de Domingo - ADMBG</title><style>body{font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000;max-width:600px;margin:0 auto}h1{text-align:center;color:#FF6B00;margin-bottom:5px}h2{text-align:center;color:#333;font-size:1.1rem;margin-bottom:20px}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:12px;text-align:left}th{background:#FF6B00;color:#fff}td:first-child{font-weight:bold}.art{background:#e8f5e9}.footer{text-align:center;color:#666;margin-top:25px;font-size:0.8rem}.logo{text-align:center;font-size:1.8rem;margin-bottom:10px}</style></head><body><div class="logo">⛪</div><h1>AD Madureira</h1><h2>Bento Goncalves/RS</h2><table><tr><th>Membro</th><th>Funcao</th></tr>'+rows+'</table><div class="footer">Escala gerada em '+dateStr+'<br>Pr. Presidente Gideon Barros</div></body></html>';var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='escala-domingo-'+dateStr.replace(/\//g,'-')+'.html';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);alert('Escala baixada! Abra o arquivo e use "Compartilhar" para mandar no WhatsApp.');}
+function initPresence(){dbRef.ref('presence').on('value',function(snapshot){var data=snapshot.val();var container=document.getElementById('presence-list');var html='';for(var i=0;i<members.length;i++){var present=data&&data['m'+i]?true:false;var reason=data&&data['m'+i+'_reason']?data['m'+i+'_reason']:'';html+='<div class="presence-item"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">'+members[i]+'</span><input type="checkbox" id="pres-'+i+'" onchange="togglePresence('+i+')" '+(present?'checked':'')+' style="width:20px;height:20px;cursor:pointer"></div>'+(present?'':'<div class="absent-fields" style="display:block;margin-top:5px"><input type="text" class="login-input" style="margin:0;font-size:0.8rem" placeholder="Motivo da falta..." value="'+reason+'" onblur="savePresenceReason('+i+',this.value)"></div>')+'</div>';}container.innerHTML=html;updatePresenceCount();});}
+function togglePresence(i){var cb=document.getElementById('pres-'+i);var updates={};updates['m'+i]=cb.checked;if(!cb.checked){updates['m'+i+'_reason']='';}dbRef.ref('presence').update(updates);}
+function savePresenceReason(i,reason){var updates={};updates['m'+i+'_reason']=reason;dbRef.ref('presence').update(updates);}
+function updatePresenceCount(){var count=0;for(var i=0;i<members.length;i++){var cb=document.getElementById('pres-'+i);if(cb&&cb.checked){count++;}}document.getElementById('presence-count').textContent=count+' de '+members.length+' presentes';}
 function savePresence(){alert('Presenca salva!');}
-
-function initCalendar(){
-var container=document.getElementById('cal-grid');
-var html='';
-for(var i=0;i<postTypes.length;i++){
-var post=postTypes[i];
-html+='<div class="cal-day" id="cal-'+i+'" onclick="togglePost('+i+')"><div style="font-weight:700;font-size:0.9rem">'+post.day+'</div><div class="type" style="color:var(--gray);font-size:0.8rem;margin-top:5px">'+post.type+'</div><div style="margin-top:8px;font-size:0.7rem;color:var(--gray)">Clique para marcar</div></div>';
-}
-container.innerHTML=html;
-dbRef.ref('posts').on('value',function(snapshot){
-var data=snapshot.val();
-var doneCount=0;
-for(var i=0;i<postTypes.length;i++){
-var done=data&&data['p'+i]?true:false;
-var el=document.getElementById('cal-'+i);
-if(done){el.classList.add('done');doneCount++;}
-else{el.classList.remove('done');}
-}
-document.getElementById('post-stats').textContent=doneCount+' de 7 concluidos';
-});
-}
-function togglePost(i){
-dbRef.ref('posts/p'+i).transaction(function(current){
-return !current;
-});
-}
-
-function initDeadline(){
-var saved=JSON.parse(localStorage.getItem('deadline')||'null');
-if(saved){updateDeadline(saved);}else{showDeadlineForm();}
-}
-function showDeadlineForm(){
-document.getElementById('deadlineInputRow').style.display='flex';
-document.getElementById('btnDone').style.display='none';
-document.getElementById('btnReset').style.display='none';
-document.getElementById('deadlineCount').textContent='—';
-document.getElementById('deadlineCount').className='deadline-count';
-document.getElementById('deadlineText').textContent='Clique para iniciar contagem de 2 dias';
-document.getElementById('deadlineDateDisplay').textContent='';
-document.getElementById('deadlineBox').className='deadline-box';
-}
-function setDeadline(){
-var now=new Date();
-var dl=new Date(now.getTime()+2*24*60*60*1000);
-var y=dl.getFullYear();
-var m=String(dl.getMonth()+1).padStart(2,'0');
-var d=String(dl.getDate()).padStart(2,'0');
-var deadline={date:y+'-'+m+'-'+d,done:false,setAt:now.toISOString()};
-localStorage.setItem('deadline',JSON.stringify(deadline));
-updateDeadline(deadline);
-}
-function updateDeadline(dl){
-var box=document.getElementById('deadlineBox');
-var countEl=document.getElementById('deadlineCount');
-var textEl=document.getElementById('deadlineText');
-var dateDisp=document.getElementById('deadlineDateDisplay');
-var btnDone=document.getElementById('btnDone');
-var btnReset=document.getElementById('btnReset');
-var inputRow=document.getElementById('deadlineInputRow');
-var parts=dl.date.split('-');
-var targetDate=new Date(parts[0],parts[1]-1,parts[2],23,59,59);
-var now=new Date();
-var diff=targetDate-now;
-if(dl.done){
-box.className='deadline-box done';countEl.className='deadline-count done';countEl.textContent='OK';textEl.textContent='Arte entregue!';dateDisp.textContent='Concluido em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';
-}else if(diff<=0){
-box.className='deadline-box urgent';countEl.className='deadline-count urgent';countEl.textContent='!';textEl.textContent='ATRASADO!';dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');btnDone.style.display='block';btnDone.textContent='Entregar Agora';btnReset.style.display='inline-block';inputRow.style.display='none';
-}else{
-var days=Math.floor(diff/86400000);var hours=Math.floor((diff%86400000)/3600000);box.className='deadline-box';countEl.className='deadline-count';if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}countEl.textContent=days;if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' as 23:59';btnDone.style.display='block';btnDone.textContent='Concluido';btnReset.style.display='inline-block';inputRow.style.display='none';
-}
-}
-function markDone(){
-var saved=JSON.parse(localStorage.getItem('deadline')||'null');
-if(!saved){return;}
-saved.done=true;saved.doneAt=new Date().toISOString();
-localStorage.setItem('deadline',JSON.stringify(saved));
-updateDeadline(saved);
-}
+function initCalendar(){var container=document.getElementById('cal-grid');var html='';for(var i=0;i<postTypes.length;i++){var post=postTypes[i];html+='<div class="cal-day" id="cal-'+i+'" onclick="togglePost('+i+')"><div style="font-weight:700;font-size:0.9rem">'+post.day+'</div><div class="type" style="color:var(--gray);font-size:0.8rem;margin-top:5px">'+post.type+'</div><div style="margin-top:8px;font-size:0.7rem;color:var(--gray)">Clique para marcar</div></div>';}container.innerHTML=html;dbRef.ref('posts').on('value',function(snapshot){var data=snapshot.val();var doneCount=0;for(var i=0;i<postTypes.length;i++){var done=data&&data['p'+i]?true:false;var el=document.getElementById('cal-'+i);if(done){el.classList.add('done');doneCount++;}else{el.classList.remove('done');}}document.getElementById('post-stats').textContent=doneCount+' de 7 concluidos';});}
+function togglePost(i){dbRef.ref('posts/p'+i).transaction(function(current){return !current;});}
+function initDeadline(){var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(saved){updateDeadline(saved);}else{showDeadlineForm();}}
+function showDeadlineForm(){document.getElementById('deadlineInputRow').style.display='flex';document.getElementById('btnDone').style.display='none';document.getElementById('btnReset').style.display='none';document.getElementById('deadlineCount').textContent='—';document.getElementById('deadlineCount').className='deadline-count';document.getElementById('deadlineText').textContent='Clique para iniciar contagem de 2 dias';document.getElementById('deadlineDateDisplay').textContent='';document.getElementById('deadlineBox').className='deadline-box';}
+function setDeadline(){var now=new Date();var dl=new Date(now.getTime()+2*24*60*60*1000);var y=dl.getFullYear();var m=String(dl.getMonth()+1).padStart(2,'0');var d=String(dl.getDate()).padStart(2,'0');var deadline={date:y+'-'+m+'-'+d,done:false,setAt:now.toISOString()};localStorage.setItem('deadline',JSON.stringify(deadline));updateDeadline(deadline);}
+function updateDeadline(dl){var box=document.getElementById('deadlineBox');var countEl=document.getElementById('deadlineCount');var textEl=document.getElementById('deadlineText');var dateDisp=document.getElementById('deadlineDateDisplay');var btnDone=document.getElementById('btnDone');var btnReset=document.getElementById('btnReset');var inputRow=document.getElementById('deadlineInputRow');var parts=dl.date.split('-');var targetDate=new Date(parts[0],parts[1]-1,parts[2],23,59,59);var now=new Date();var diff=targetDate-now;if(dl.done){box.className='deadline-box done';countEl.className='deadline-count done';countEl.textContent='OK';textEl.textContent='Arte entregue!';dateDisp.textContent='Concluido em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';}else if(diff<=0){box.className='deadline-box urgent';countEl.className='deadline-count urgent';countEl.textContent='!';textEl.textContent='ATRASADO!';dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');btnDone.style.display='block';btnDone.textContent='Entregar Agora';btnReset.style.display='inline-block';inputRow.style.display='none';}else{var days=Math.floor(diff/86400000);var hours=Math.floor((diff%86400000)/3600000);box.className='deadline-box';countEl.className='deadline-count';if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}countEl.textContent=days;if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' as 23:59';btnDone.style.display='block';btnDone.textContent='Concluido';btnReset.style.display='inline-block';inputRow.style.display='none';}}
+function markDone(){var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(!saved){return;}saved.done=true;saved.doneAt=new Date().toISOString();localStorage.setItem('deadline',JSON.stringify(saved));updateDeadline(saved);}
 function resetDeadline(){localStorage.removeItem('deadline');showDeadlineForm();}
 setInterval(function(){var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(saved&&!saved.done){updateDeadline(saved);}},60000);
-
 function initHinos(){var saved=JSON.parse(localStorage.getItem('hinos')||'[]');renderHinos(saved);}
-function renderHinos(hinos){
-var container=document.getElementById('hinos-grid');
-document.getElementById('hino-count').textContent=hinos.length+' hinos';
-var html='';
-for(var i=0;i<hinos.length;i++){
-var h=hinos[i];
-var badge=h.kind==='file'?'<span class="hino-badge file">Arquivo</span>':'<span class="hino-badge link">Link</span>';
-var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';
-html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';
-}
-html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">+</div><div>Adicionar Hino</div></div>';
-container.innerHTML=html;
-}
-function showHinoChoice(){
-var choice=confirm('OK = UPLOAD de arquivo\nCancelar = usar link');
-if(choice){document.getElementById('fileInput').click();}
-else{
-var name=prompt('Nome do hino:');if(!name)return;
-var link=prompt('Cole o link do Google Drive:');if(!link)return;
-var type=prompt('Tipo:','Video com letra');if(!type)type='Video com letra';
-var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
-hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});
-localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);
-}
-}
-document.getElementById('fileInput').addEventListener('change',function(e){
-var file=e.target.files[0];if(!file)return;
-var name=prompt('Nome do hino:','');if(!name){e.target.value='';return;}
-var type=prompt('Tipo:','Video com letra');if(!type)type='Video com letra';
-var hinoId='hino_'+Date.now();
-var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');
-hinos.unshift({name:name,type:type,icon:'🎵',kind:'file',hinoId:hinoId});
-localStorage.setItem('hinos',JSON.stringify(hinos));
-saveVideoToDb(hinoId,file,function(ok){if(ok){alert('"'+name+'" salvo!');}else{alert('Erro. Tente um arquivo menor.');}renderHinos(hinos);});
-e.target.value='';
-});
+function renderHinos(hinos){var container=document.getElementById('hinos-grid');document.getElementById('hino-count').textContent=hinos.length+' hinos';var html='';for(var i=0;i<hinos.length;i++){var h=hinos[i];var badge=h.kind==='file'?'<span class="hino-badge file">Arquivo</span>':'<span class="hino-badge link">Link</span>';var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';}html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">+</div><div>Adicionar Hino</div></div>';container.innerHTML=html;}
+function showHinoChoice(){var choice=confirm('OK = UPLOAD de arquivo\nCancelar = usar link');if(choice){document.getElementById('fileInput').click();}else{var name=prompt('Nome do hino:');if(!name)return;var link=prompt('Cole o link do Google Drive:');if(!link)return;var type=prompt('Tipo:','Video com letra');if(!type)type='Video com letra';var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}}
+document.getElementById('fileInput').addEventListener('change',function(e){var file=e.target.files[0];if(!file)return;var name=prompt('Nome do hino:','');if(!name){e.target.value='';return;}var type=prompt('Tipo:','Video com letra');if(!type)type='Video com letra';var hinoId='hino_'+Date.now();var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,type:type,icon:'🎵',kind:'file',hinoId:hinoId});localStorage.setItem('hinos',JSON.stringify(hinos));saveVideoToDb(hinoId,file,function(ok){if(ok){alert('"'+name+'" salvo!');}else{alert('Erro. Tente um arquivo menor.');}renderHinos(hinos);});e.target.value='';});
 function playHinoFile(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];getVideoFromDb(h.hinoId,function(blob){if(blob){var url=URL.createObjectURL(blob);document.getElementById('videoModalTitle').textContent=h.name;document.getElementById('videoModal').classList.add('active');document.getElementById('videoPlayer').src=url;}else{alert('Arquivo nao encontrado.');}});}
 function playHinoLink(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];window.open(h.link,'_blank');}
 function closeVideoModal(){document.getElementById('videoModal').classList.remove('active');var vp=document.getElementById('videoPlayer');vp.pause();vp.src='';}
 function removeHino(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];if(h.kind==='file'&&h.hinoId){deleteVideoFromDb(h.hinoId,function(){});}hinos.splice(i,1);localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}
-
-function initRanking(){
-var container=document.getElementById('ranking-list');
-var ranking=[];
-for(var i=0;i<members.length;i++){ranking.push({name:members[i],posts:(i+1)*3});}
-ranking.sort(function(a,b){return b.posts-a.posts;});
-var html='';
-for(var i=0;i<ranking.length;i++){
-var item=ranking[i];
-var cls=i===0?'ranking-item top-rank':'ranking-item';
-var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'º';
-html+='<div class="'+cls+'"><span>'+medal+' <strong>'+item.name+'</strong></span><span style="color:var(--primary);font-weight:700">'+item.posts+' posts</span></div>';
-}
-container.innerHTML=html;
-}
-
-function initNotices(){
-dbRef.ref('notices').on('value',function(snapshot){
-var data=snapshot.val();
-var notices=[];
-if(data){
-var keys=Object.keys(data);
-for(var i=0;i<keys.length;i++){
-var n=data[keys[i]];
-n.id=keys[i];
-notices.push(n);
-}
-}
-notices.sort(function(a,b){return (b.timestamp||0)-(a.timestamp||0);});
-renderNotices(notices);
-});
-}
-function addNotice(){
-var text=document.getElementById('notice-text').value.trim();
-if(!text){return;}
-dbRef.ref('notices').push({text:text,date:new Date().toLocaleDateString('pt-BR'),timestamp:Date.now()});
-document.getElementById('notice-text').value='';
-}
-function renderNotices(notices){
-var container=document.getElementById('notice-list');
-if(notices.length===0){container.innerHTML='<p style="color:var(--gray);font-size:0.9rem">Nenhum aviso ainda.</p>';return;}
-var html='';
-for(var i=0;i<notices.length;i++){
-var n=notices[i];
-html+='<div class="notice-item"><div><strong>'+n.text+'</strong><br><small style="color:var(--gray)">'+n.date+'</small></div><button class="btn-action" onclick="removeNotice(\''+n.id+'\')" style="color:var(--red)">Excluir</button></div>';
-}
-container.innerHTML=html;
-}
+function initRanking(){var container=document.getElementById('ranking-list');var ranking=[];for(var i=0;i<members.length;i++){ranking.push({name:members[i],posts:(i+1)*3});}ranking.sort(function(a,b){return b.posts-a.posts;});var html='';for(var i=0;i<ranking.length;i++){var item=ranking[i];var cls=i===0?'ranking-item top-rank':'ranking-item';var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'º';html+='<div class="'+cls+'"><span>'+medal+' <strong>'+item.name+'</strong></span><span style="color:var(--primary);font-weight:700">'+item.posts+' posts</span></div>';}container.innerHTML=html;}
+function initNotices(){dbRef.ref('notices').on('value',function(snapshot){var data=snapshot.val();var notices=[];if(data){var keys=Object.keys(data);for(var i=0;i<keys.length;i++){var n=data[keys[i]];n.id=keys[i];notices.push(n);}}notices.sort(function(a,b){return (b.timestamp||0)-(a.timestamp||0);});renderNotices(notices);});}
+function addNotice(){var text=document.getElementById('notice-text').value.trim();if(!text){return;}dbRef.ref('notices').push({text:text,date:new Date().toLocaleDateString('pt-BR'),timestamp:Date.now()});document.getElementById('notice-text').value='';}
+function renderNotices(notices){var container=document.getElementById('notice-list');if(notices.length===0){container.innerHTML='<p style="color:var(--gray);font-size:0.9rem">Nenhum aviso ainda.</p>';return;}var html='';for(var i=0;i<notices.length;i++){var n=notices[i];html+='<div class="notice-item"><div><strong>'+n.text+'</strong><br><small style="color:var(--gray)">'+n.date+'</small></div><button class="btn-action" onclick="removeNotice(\''+n.id+'\')" style="color:var(--red)">Excluir</button></div>';}container.innerHTML=html;}
 function removeNotice(id){dbRef.ref('notices/'+id).remove();}
-
-function initAll(){
-initMotivation();
-initBirthdays();
-initCultTheme();
-initWeekResponsible();
-initArtResponsible();
-initScale();
-initDeadline();
-initPresence();
-initCalendar();
-initHinos();
-initRanking();
-initNotices();
-}
-initDb();
-initBgIcons();
-initPWA();
+function initAll(){initMotivation();initBirthdays();initCultTheme();initWeekResponsible();initArtResponsible();initScale();initDeadline();initPresence();initCalendar();initHinos();initRanking();initNotices();}
+initDb();initBgIcons();initPWA();
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeVideoModal();}});
 </script>
 </body>
