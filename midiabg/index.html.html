@@ -11,25 +11,25 @@
 body{font-family:'Inter',sans-serif;background:var(--dark);color:var(--white);line-height:1.6;overflow-x:hidden}
 .container{max-width:1200px;margin:0 auto;padding:0 24px}
 .bg-icons{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
-.bg-icon{position:absolute;font-size:2rem;opacity:0.06;animation:floatUp 15s linear infinite}
+.bg-icon{position:absolute;font-size:2rem;opacity:0.06;pointer-events:none;animation:floatUp 15s linear infinite}
 @keyframes floatUp{0%{transform:translateY(110vh) rotate(0deg) scale(1)}50%{opacity:0.1}100%{transform:translateY(-20vh) rotate(360deg) scale(1.3)}}
 @keyframes floatSide{0%{transform:translateX(-10vw) translateY(110vh) rotate(0deg)}50%{opacity:0.08}100%{transform:translateX(110vw) translateY(-20vh) rotate(-360deg)}}
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,rgba(255,107,0,0.08) 0%,transparent 60%),var(--dark);position:relative;z-index:1}
-.login-box{background:var(--dark-soft);border:1px solid var(--gray-light);border-radius:20px;padding:40px;max-width:400px;width:90%;text-align:center}
-.login-logo{width:100px;height:100px;margin:0 auto 20px;border-radius:50%;overflow:hidden;border:2px solid var(--primary)}
-.login-logo img{width:100%;height:100%;object-fit:cover}
-.login-input{width:100%;background:var(--dark);border:1px solid var(--gray-light);border-radius:10px;padding:12px;color:var(--white);margin-bottom:15px;outline:none}
-.login-btn{width:100%;background:var(--primary);color:var(--white);border:none;border-radius:10px;padding:12px;font-weight:700;cursor:pointer}
-#portal{display:none;position:relative;z-index:1}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,rgba(255,107,0,0.08) 0%,transparent 60%),var(--dark);position:relative;z-index:10}
+.login-box{background:var(--dark-soft);border:1px solid var(--gray-light);border-radius:20px;padding:40px;max-width:400px;width:90%;text-align:center;position:relative;z-index:20;pointer-events:auto}
+.login-logo{width:100px;height:100px;margin:0 auto 20px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);pointer-events:none}
+.login-logo img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.login-input{width:100%;background:var(--dark);border:1px solid var(--gray-light);border-radius:10px;padding:12px;color:var(--white);margin-bottom:15px;outline:none;position:relative;z-index:21;pointer-events:auto}
+.login-btn{width:100%;background:var(--primary);color:var(--white);border:none;border-radius:10px;padding:12px;font-weight:700;cursor:pointer;position:relative;z-index:21;pointer-events:auto}
+#portal{display:none;position:relative;z-index:10}
 header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--gray-light)}
 .nav{display:flex;justify-content:space-between;align-items:center;height:70px}
 .nav-brand{display:flex;align-items:center;gap:10px}
-.nav-logo{width:35px;height:35px;border-radius:50%;overflow:hidden;border:1px solid var(--primary)}
+.nav-logo{width:35px;height:35px;border-radius:50%;overflow:hidden;border:1px solid var(--primary);pointer-events:none}
 .nav-links{display:flex;gap:5px;align-items:center;overflow-x:auto}
-.nav-links a,.nav-links button{color:var(--gray);text-decoration:none;font-size:0.8rem;padding:8px 12px;border-radius:8px;background:none;border:none;cursor:pointer;white-space:nowrap}
+.nav-links a,.nav-links button{color:var(--gray);text-decoration:none;font-size:0.8rem;padding:8px 12px;border-radius:8px;background:none;border:none;cursor:pointer;white-space:nowrap;pointer-events:auto}
 .nav-links a:hover,.nav-links button:hover{color:var(--white);background:var(--gray-light)}
 .btn-drive{background:rgba(255,107,0,0.1)!important;color:var(--primary)!important;font-weight:700}
-section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relative;z-index:1}
+section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relative;z-index:10}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
 .card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:14px;padding:20px;transition:0.3s}
 .card:hover{border-color:var(--primary)}
@@ -39,10 +39,10 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .bday-section{background:linear-gradient(135deg,rgba(255,107,0,0.08),rgba(255,107,0,0.02));border:1px solid rgba(255,107,0,0.2);border-radius:14px;padding:25px;margin-bottom:10px}
 .bday-title{font-size:1.1rem;font-weight:700;margin-bottom:15px;text-align:center}
 .bday-month-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:15px}
-.bday-month-tab{background:var(--dark-card);border:1px solid var(--gray-light);color:var(--gray);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;white-space:nowrap;transition:0.3s}
+.bday-month-tab{background:var(--dark-card);border:1px solid var(--gray-light);color:var(--gray);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;white-space:nowrap;transition:0.3s;pointer-events:auto}
 .bday-month-tab:hover{border-color:var(--primary);color:var(--white)}
 .bday-month-tab.active{background:var(--primary);color:var(--white);border-color:var(--primary);font-weight:700}
-.bday-month-tab.has-bday::after{content:' ●';color:var(--primary)}
+.bday-month-tab.has-bday::after{content:' \25CF';color:var(--primary)}
 .bday-month-tab.active.has-bday::after{color:var(--white)}
 .bday-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .bday-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:10px;padding:15px;text-align:center;transition:0.3s;position:relative}
@@ -57,19 +57,19 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .bday-badge.today{background:rgba(0,200,83,0.2);color:var(--green)}
 .bday-badge.month{background:rgba(255,107,0,0.2);color:var(--primary)}
 .bday-actions{display:flex;gap:5px;justify-content:center;margin-top:8px}
-.bday-edit,.bday-del{font-size:0.65rem;background:none;border:none;cursor:pointer;padding:3px 8px;border-radius:5px}
+.bday-edit,.bday-del{font-size:0.65rem;background:none;border:none;cursor:pointer;padding:3px 8px;border-radius:5px;pointer-events:auto}
 .bday-edit{color:var(--primary);background:rgba(255,107,0,0.1)}
 .bday-del{color:var(--red);background:rgba(255,59,48,0.1)}
-.bday-add-btn{background:rgba(255,107,0,0.1);border:1px dashed var(--primary);border-radius:10px;padding:15px;text-align:center;cursor:pointer;color:var(--primary);font-weight:600;font-size:0.85rem;transition:0.3s;width:100%;margin-top:12px}
+.bday-add-btn{background:rgba(255,107,0,0.1);border:1px dashed var(--primary);border-radius:10px;padding:15px;text-align:center;cursor:pointer;color:var(--primary);font-weight:600;font-size:0.85rem;transition:0.3s;width:100%;margin-top:12px;pointer-events:auto}
 .bday-add-btn:hover{background:rgba(255,107,0,0.2)}
-.bday-form{background:var(--dark-soft);border:1px solid var(--primary);border-radius:10px;padding:20px;margin-top:12px;display:none}
+.bday-form{background:var(--dark-soft);border:1px solid var(--primary);border-radius:10px;padding:20px;margin-top:12px;display:none;pointer-events:auto}
 .bday-form.active{display:block}
-.bday-form input,.bday-form select{width:100%;background:var(--dark);border:1px solid var(--gray-light);border-radius:8px;padding:10px;color:var(--white);margin-bottom:10px;outline:none;font-size:0.9rem}
+.bday-form input,.bday-form select{width:100%;background:var(--dark);border:1px solid var(--gray-light);border-radius:8px;padding:10px;color:var(--white);margin-bottom:10px;outline:none;font-size:0.9rem;pointer-events:auto}
 .bday-form input:focus,.bday-form select:focus{border-color:var(--primary)}
 .bday-form-row{display:flex;gap:10px}
 .bday-form-row input,.bday-form-row select{flex:1}
 .bday-form-actions{display:flex;gap:10px;margin-top:5px}
-.bday-form-actions button{flex:1;padding:10px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:0.9rem}
+.bday-form-actions button{flex:1;padding:10px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:0.9rem;pointer-events:auto}
 .bday-save{background:var(--green);color:white}
 .bday-cancel{background:var(--gray-light);color:var(--gray)}
 .week-responsible{background:linear-gradient(135deg,rgba(255,107,0,0.15),rgba(255,107,0,0.03));border:1px solid var(--primary);border-radius:14px;padding:25px;text-align:center}
@@ -89,22 +89,22 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .deadline-text{font-size:0.9rem;color:var(--gray);margin-bottom:15px}
 .deadline-date{font-size:0.8rem;color:var(--gray);margin-bottom:15px}
 .deadline-input-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:15px}
-.btn-deadline{background:var(--primary);color:white;padding:8px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:0.85rem}
-.btn-done{background:var(--green);color:white;padding:12px 30px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-size:1rem;width:100%;transition:0.3s}
+.btn-deadline{background:var(--primary);color:white;padding:8px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:0.85rem;pointer-events:auto}
+.btn-done{background:var(--green);color:white;padding:12px 30px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-size:1rem;width:100%;transition:0.3s;pointer-events:auto}
 .btn-done:hover{background:#00B845}
-.btn-reset{background:var(--gray-light);color:var(--gray);padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:0.8rem;margin-top:10px}
+.btn-reset{background:var(--gray-light);color:var(--gray);padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:0.8rem;margin-top:10px;pointer-events:auto}
 .scale-row{display:grid;grid-template-columns:1fr 2fr 100px;padding:15px;border-bottom:1px solid var(--gray-light);align-items:center;gap:10px}
 .role-detail{font-size:0.75rem;color:var(--gray);margin-top:3px}
-.btn-action{background:var(--gray-light);border:none;color:var(--white);padding:6px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer}
-.btn-rotate{background:var(--primary);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
-.btn-green{background:var(--green);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.btn-action{background:var(--gray-light);border:none;color:var(--white);padding:6px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;pointer-events:auto}
+.btn-rotate{background:var(--primary);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
+.btn-green{background:var(--green);color:white;padding:10px 20px;border-radius:8px;border:none;font-weight:700;cursor:pointer;pointer-events:auto}
 .presence-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
 .presence-item{display:flex;flex-direction:column;gap:10px}
 .absent-fields{display:none;margin-top:5px}
 .ranking-item{display:flex;justify-content:space-between;align-items:center;padding:10px;margin-bottom:5px;border-radius:8px}
 .top-rank{background:rgba(255,107,0,0.15);border:1px solid var(--primary)}
 .cal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
-.cal-day{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:10px;padding:15px;cursor:pointer;transition:0.3s}
+.cal-day{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:10px;padding:15px;cursor:pointer;transition:0.3s;pointer-events:auto}
 .cal-day:hover{border-color:var(--primary)}
 .cal-day.done{border-color:var(--green);background:rgba(0,200,83,0.05)}
 .cal-day.done .type{color:var(--green)}
@@ -115,21 +115,21 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 .bg-warn{background:rgba(255,179,0,0.2);color:var(--yellow)}
 .bg-error{background:rgba(255,59,48,0.2);color:var(--red)}
 .hinos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
-.hino-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:12px;padding:20px;text-align:center;transition:0.3s;cursor:pointer;color:var(--white);display:flex;flex-direction:column;align-items:center;gap:8px}
+.hino-card{background:var(--dark-card);border:1px solid var(--gray-light);border-radius:12px;padding:20px;text-align:center;transition:0.3s;cursor:pointer;color:var(--white);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:auto}
 .hino-card:hover{border-color:var(--primary);transform:translateY(-3px)}
-.hino-icon{font-size:2rem}
+.hino-icon{font-size:2rem;pointer-events:none}
 .hino-title{font-weight:600;font-size:0.9rem}
 .hino-type{font-size:0.7rem;color:var(--gray)}
 .hino-badge{font-size:0.6rem;padding:2px 8px;border-radius:100px;font-weight:700;margin-top:4px}
 .hino-badge.file{background:rgba(0,200,83,0.2);color:var(--green)}
 .hino-badge.link{background:rgba(255,107,0,0.2);color:var(--primary)}
-.hino-del{font-size:0.65rem;color:var(--red);margin-top:5px;background:none;border:none;cursor:pointer}
-.hino-add{background:rgba(255,107,0,0.1);border:1px dashed var(--primary);border-radius:12px;padding:20px;text-align:center;cursor:pointer;color:var(--primary);font-weight:600;font-size:0.85rem;display:flex;flex-direction:column;align-items:center;gap:8px;transition:0.3s}
+.hino-del{font-size:0.65rem;color:var(--red);margin-top:5px;background:none;border:none;cursor:pointer;pointer-events:auto}
+.hino-add{background:rgba(255,107,0,0.1);border:1px dashed var(--primary);border-radius:12px;padding:20px;text-align:center;cursor:pointer;color:var(--primary);font-weight:600;font-size:0.85rem;display:flex;flex-direction:column;align-items:center;gap:8px;transition:0.3s;pointer-events:auto}
 .hino-add:hover{background:rgba(255,107,0,0.2)}
 .video-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:2000;align-items:center;justify-content:center;flex-direction:column}
 .video-modal.active{display:flex}
 .video-modal video{max-width:90%;max-height:80vh;border-radius:12px}
-.video-modal-close{position:fixed;top:20px;right:20px;background:var(--red);color:white;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;z-index:2001}
+.video-modal-close{position:fixed;top:20px;right:20px;background:var(--red);color:white;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;z-index:2001;pointer-events:auto}
 .video-modal-title{color:var(--white);font-size:1rem;margin-bottom:15px;font-weight:600}
 </style>
 </head>
@@ -152,14 +152,14 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <span style="font-weight:700">MÍDIA <span style="color:var(--primary)">ADMBG</span></span>
 </div>
 <div class="nav-links">
-<a href="#aniversariantes">🎂 Aniversários</a>
+<a href="#aniversariantes">Aniversários</a>
 <a href="#escala">Escala</a>
 <a href="#presenca">Presença</a>
 <a href="#calendario">Posts</a>
 <a href="#hinos">Hinos</a>
 <a href="#ranking">Ranking</a>
 <a href="#avisos">Avisos</a>
-<a href="https://drive.google.com" target="_blank" class="btn-drive">📁 Drive</a>
+<a href="https://drive.google.com" target="_blank" class="btn-drive">Drive</a>
 <button onclick="logout()" style="color:var(--red)">Sair</button>
 </div>
 </div>
@@ -167,8 +167,8 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div class="container">
 <section style="text-align:center">
 <h1 style="font-size:2rem">Olá, <span style="color:var(--primary)">Equipe!</span></h1>
-<p style="color:var(--gray)">Sara • Letícia • Gabriela • Kauane • Eva</p>
-<div style="margin-top:15px;font-size:0.9rem;font-weight:600">⛪ Próximo Culto: Domingo 19h00 (Sede)</div>
+<p style="color:var(--gray)">Sara - Gabriela - Kauane - Eva</p>
+<div style="margin-top:15px;font-size:0.9rem;font-weight:600">Próximo Culto: Domingo 19h00 (Sede)</div>
 </section>
 <section>
 <div class="motivation-box">
@@ -178,25 +178,23 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 </section>
 <section id="aniversariantes">
 <div class="section-header">
-<h2>🎂 Aniversariantes da Igreja</h2>
+<h2>Aniversariantes da Igreja</h2>
 <span id="bdayTotalCount" style="font-size:0.9rem;color:var(--gray)">0 cadastrados</span>
 </div>
 <div class="bday-section">
 <div class="bday-month-tabs" id="bdayMonthTabs"></div>
 <div class="bday-grid" id="bdayGrid"></div>
-<button class="bday-add-btn" onclick="toggleBdayForm()">➕ Adicionar Aniversariante</button>
+<button class="bday-add-btn" onclick="toggleBdayForm()">+ Adicionar Aniversariante</button>
 <div class="bday-form" id="bdayForm">
 <h3 style="margin-bottom:15px;font-size:1rem" id="bdayFormTitle">Novo Aniversariante</h3>
 <input type="text" id="bdayNameInput" placeholder="Nome completo">
 <div class="bday-form-row">
-<select id="bdayDayInput">
-<option value="">Dia</option>
-</select>
+<select id="bdayDayInput"><option value="">Dia</option></select>
 <select id="bdayMonthInput">
-<option value="">Mês</option>
+<option value="">Mes</option>
 <option value="0">Janeiro</option>
 <option value="1">Fevereiro</option>
-<option value="2">Março</option>
+<option value="2">Marco</option>
 <option value="3">Abril</option>
 <option value="4">Maio</option>
 <option value="5">Junho</option>
@@ -209,7 +207,7 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 </select>
 </div>
 <div class="bday-form-actions">
-<button class="bday-save" onclick="saveBday()">💾 Salvar</button>
+<button class="bday-save" onclick="saveBday()">Salvar</button>
 <button class="bday-cancel" onclick="toggleBdayForm()">Cancelar</button>
 </div>
 </div>
@@ -217,65 +215,65 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 </section>
 <section>
 <div class="week-responsible">
-<div class="week-label">⭐ Responsável da Semana</div>
+<div class="week-label">Responsável da Semana</div>
 <div class="week-name" id="week-name">—</div>
 <div class="week-role" id="week-role">—</div>
-<button class="btn-rotate" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateWeekResponsible()">🔄 Alterar Responsável</button>
+<button class="btn-rotate" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateWeekResponsible()">Alterar Responsável</button>
 </div>
 <div class="art-responsible">
-<div class="art-label">🎨 Responsável pela Arte de Domingo</div>
+<div class="art-label">Responsável pela Arte de Domingo</div>
 <div class="art-name" id="art-name">—</div>
 <div style="font-size:0.8rem;color:var(--gray)">Atualizado toda segunda-feira</div>
-<button class="btn-green" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateArtResponsible()">🔄 Alterar Arte</button>
+<button class="btn-green" style="margin-top:15px;font-size:0.8rem;padding:8px 16px" onclick="rotateArtResponsible()">Alterar Arte</button>
 </div>
 <div class="deadline-box" id="deadlineBox">
-<div class="deadline-label">⏰ Prazo para Entrega da Arte</div>
+<div class="deadline-label">Prazo para Entrega da Arte</div>
 <div class="deadline-count" id="deadlineCount">—</div>
 <div class="deadline-text" id="deadlineText">Clique para iniciar contagem de 2 dias</div>
 <div class="deadline-date" id="deadlineDateDisplay"></div>
 <div class="deadline-input-row" id="deadlineInputRow">
-<button class="btn-deadline" onclick="setDeadline()">⏰ Definir 2 Dias</button>
+<button class="btn-deadline" onclick="setDeadline()">Definir 2 Dias</button>
 </div>
-<button class="btn-done" id="btnDone" onclick="markDone()" style="display:none">✅ Concluído</button>
-<button class="btn-reset" id="btnReset" onclick="resetDeadline()" style="display:none">🔄 Novo Prazo</button>
+<button class="btn-done" id="btnDone" onclick="markDone()" style="display:none">Concluído</button>
+<button class="btn-reset" id="btnReset" onclick="resetDeadline()" style="display:none">Novo Prazo</button>
 </div>
 </section>
 <section id="escala">
 <div class="section-header">
-<h2>📅 Escala de Domingo</h2>
-<button class="btn-rotate" onclick="rotateScale()">🔄 Gerar Nova Escala</button>
+<h2>Escala de Domingo</h2>
+<button class="btn-rotate" onclick="rotateScale()">Gerar Nova Escala</button>
 </div>
 <div class="card" id="scale-container"></div>
 <p id="last-update" style="font-size:0.7rem;color:var(--gray);margin-top:10px"></p>
 </section>
 <section id="presenca">
 <div class="section-header">
-<h2>📋 Presença do Culto</h2>
-<span id="presence-count" style="color:var(--primary);font-weight:700">0 de 5 presentes</span>
+<h2>Presença do Culto</h2>
+<span id="presence-count" style="color:var(--primary);font-weight:700">0 de 4 presentes</span>
 </div>
 <div class="card presence-list" id="presence-list"></div>
 <button class="btn-rotate" style="margin-top:20px;width:100%" onclick="savePresence()">Salvar Presença</button>
 </section>
 <section id="calendario">
 <div class="section-header">
-<h2>📱 Calendário de Posts</h2>
+<h2>Calendário de Posts</h2>
 <span id="post-stats" style="font-size:0.9rem">0 de 7 concluídos</span>
 </div>
 <div class="cal-grid" id="cal-grid"></div>
 </section>
 <section id="hinos">
 <div class="section-header">
-<h2>🎵 Hinos e Slides</h2>
+<h2>Hinos e Slides</h2>
 <span id="hino-count" style="font-size:0.9rem;color:var(--gray)">0 hinos</span>
 </div>
 <div class="hinos-grid" id="hinos-grid"></div>
 </section>
 <section id="ranking">
-<div class="section-header"><h2>🏆 Ranking de Postagens</h2></div>
+<div class="section-header"><h2>Ranking de Postagens</h2></div>
 <div class="card" id="ranking-list"></div>
 </section>
 <section id="avisos">
-<div class="section-header"><h2>📌 Avisos da Equipe</h2></div>
+<div class="section-header"><h2>Avisos da Equipe</h2></div>
 <div class="notice-input">
 <input type="text" id="notice-text" class="login-input" style="margin:0" placeholder="Digite um aviso...">
 <button class="btn-rotate" onclick="addNotice()">Postar</button>
@@ -283,21 +281,27 @@ section{padding:40px 0;border-bottom:1px solid var(--gray-light);position:relati
 <div id="notice-list"></div>
 </section>
 <section style="text-align:center;padding:30px 0">
-<p style="color:var(--gray);font-size:0.8rem">AD Madureira • Bento Gonçalves/RS</p>
+<p style="color:var(--gray);font-size:0.8rem">AD Madureira - Bento Gonçalves/RS</p>
 <p style="color:var(--gray);font-size:0.7rem;margin-top:5px">Pr. Presidente Gideon Barros</p>
 </section>
 </div>
 </div>
 <div class="video-modal" id="videoModal">
-<button class="video-modal-close" onclick="closeVideoModal()">✕</button>
+<button class="video-modal-close" onclick="closeVideoModal()">X</button>
 <div class="video-modal-title" id="videoModalTitle"></div>
 <video id="videoPlayer" controls autoplay></video>
 </div>
 <input type="file" id="fileInput" accept="video/*" style="display:none">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
+var firebaseConfig={apiKey:"AIzaSyD706P3qlGfsqQLBC04YbaE_RiBszOVJyU",authDomain:"portal-midia-admbg.firebaseapp.com",databaseURL:"https://portal-midia-admbg-default-rtdb.firebaseio.com",projectId:"portal-midia-admbg",storageBucket:"portal-midia-admbg.firebasestorage.app",messagingSenderId:"574023708398",appId:"1:574023708398:web:6a89afbc48f20bdb390dff"};
+firebase.initializeApp(firebaseConfig);
+var dbRef=firebase.database();
+
 var PASSWORD='midia2026';
-var members=['Sara','Letícia','Gabriela','Kauane','Eva'];
-var monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var members=['Sara','Gabriela','Kauane','Eva'];
+var monthNames=['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 var monthShort=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 var roles=[
 {name:'Projeção (Slides)',detail:'Cuidar dos slides de letras e avisos no culto'},
@@ -328,47 +332,59 @@ var artOffset=0;
 var scaleOffset=0;
 var postDone=[false,false,false,false,false,false,false];
 var bgIcons=['📷','📱','📸','🎥','🎬','📹','📽️','📱','📷','📸'];
-var db=null;
 var bdayFilterMonth='all';
 var bdayEditId=null;
+var idb=null;
 
 function initDb(){
 var request=indexedDB.open('MidiabgDB',1);
-request.onupgradeneeded=function(e){db=e.target.result;if(!db.objectStoreNames.contains('videos')){db.createObjectStore('videos',{keyPath:'id'});}};
-request.onsuccess=function(e){db=e.target.result;};
+request.onupgradeneeded=function(e){idb=e.target.result;if(!idb.objectStoreNames.contains('videos')){idb.createObjectStore('videos',{keyPath:'id'});}};
+request.onsuccess=function(e){idb=e.target.result;};
 request.onerror=function(e){console.log('Erro DB:'+e.target.error);};
 }
-function saveVideoToDb(id,blob,callback){if(!db){callback(false);return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');var req=store.put({id:id,blob:blob});req.onsuccess=function(){callback(true);};req.onerror=function(){callback(false);};}
-function getVideoFromDb(id,callback){if(!db){callback(null);return;}var tx=db.transaction(['videos'],'readonly');var store=tx.objectStore('videos');var req=store.get(id);req.onsuccess=function(e){if(e.target.result){callback(e.target.result.blob);}else{callback(null);}};req.onerror=function(){callback(null);};}
-function deleteVideoFromDb(id,callback){if(!db){callback();return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');store.delete(id);tx.oncomplete=function(){callback();};}
-function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i&lt;12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
+function saveVideoToDb(id,blob,callback){if(!idb){callback(false);return;}var tx=idb.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');var req=store.put({id:id,blob:blob});req.onsuccess=function(){callback(true);};req.onerror=function(){callback(false);};}
+function getVideoFromDb(id,callback){if(!idb){callback(null);return;}var tx=idb.transaction(['videos'],'readonly');var store=tx.objectStore('videos');var req=store.get(id);req.onsuccess=function(e){if(e.target.result){callback(e.target.result.blob);}else{callback(null);}};req.onerror=function(){callback(null);};}
+function deleteVideoFromDb(id,callback){if(!idb){callback();return;}var tx=idb.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');store.delete(id);tx.oncomplete=function(){callback();};}
+function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i<12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
 function getWeekNumber(d){var date=new Date(d);date.setHours(0,0,0,0);date.setDate(date.getDate()+3-(date.getDay()+6)%7);var week1=new Date(date.getFullYear(),0,4);return 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7);}
 function getWeekOffset(){var weekNum=getWeekNumber(new Date());var baseWeek=32;return ((weekNum-baseWeek)%members.length+members.length)%members.length;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
 
 function initBdayDayOptions(){
 var sel=document.getElementById('bdayDayInput');
-for(var i=1;i&lt;=31;i++){
+for(var i=1;i<=31;i++){
 var opt=document.createElement('option');
 opt.value=i;opt.textContent=i;
 sel.appendChild(opt);
 }
 }
-function getBirthdays(){return JSON.parse(localStorage.getItem('birthdays')||'[]');}
-function saveBirthdays(arr){localStorage.setItem('birthdays',JSON.stringify(arr));}
 
 function initBirthdays(){
 initBdayDayOptions();
+dbRef.ref('birthdays').on('value',function(snapshot){
+var data=snapshot.val();
+var bdays=[];
+if(data){
+var keys=Object.keys(data);
+for(var i=0;i<keys.length;i++){
+var b=data[keys[i]];
+b.id=keys[i];
+bdays.push(b);
+}
+}
+window.bdaysCache=bdays;
 renderBdayMonthTabs();
 renderBirthdays();
+});
 }
+
 function renderBdayMonthTabs(){
-var bdays=getBirthdays();
+var bdays=window.bdaysCache||[];
 var now=new Date();
 var currentMonth=now.getMonth();
 var container=document.getElementById('bdayMonthTabs');
 var html='<div class="bday-month-tab '+(bdayFilterMonth==='all'?'active':'')+'" onclick="setBdayFilter(\'all\',this)">Todos ('+bdays.length+')</div>';
-for(var m=0;m&lt;12;m++){
+for(var m=0;m<12;m++){
 var count=bdays.filter(function(b){return b.month===m;}).length;
 var cls='';
 if(bdayFilterMonth==m){cls=' active';}
@@ -385,7 +401,7 @@ el.classList.add('active');
 renderBirthdays();
 }
 function renderBirthdays(){
-var bdays=getBirthdays();
+var bdays=window.bdaysCache||[];
 var now=new Date();
 var currentMonth=now.getMonth();
 var currentDay=now.getDate();
@@ -405,10 +421,10 @@ var isThisMonth=b.month===currentMonth;
 var isToday=isThisMonth&&b.day===currentDay;
 var cls='';
 var badge='';
-if(isToday){cls=' today';badge='<span class="bday-badge today">🎉 HOJE!</span>';}
-else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">📌 Este mês</span>';}
+if(isToday){cls=' today';badge='<span class="bday-badge today">HOJE!</span>';}
+else if(isThisMonth){cls=' current';badge='<span class="bday-badge month">Este mês</span>';}
 var dateStr=b.day+' de '+monthNames[b.month];
-html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'<div class="bday-actions"><button class="bday-edit" onclick="editBday(\''+b.id+'\')">✏️ Editar</button><button class="bday-del" onclick="deleteBday(\''+b.id+'\')">🗑️ Excluir</button></div></div>';
+html+='<div class="bday-card'+cls+'"><div class="bday-name">🎂 '+b.name+'</div><div class="bday-date">'+dateStr+'</div>'+badge+'<div class="bday-actions"><button class="bday-edit" onclick="editBday(\''+b.id+'\')">Editar</button><button class="bday-del" onclick="deleteBday(\''+b.id+'\')">Excluir</button></div></div>';
 }
 grid.innerHTML=html;
 }
@@ -431,21 +447,17 @@ var name=document.getElementById('bdayNameInput').value.trim();
 var day=parseInt(document.getElementById('bdayDayInput').value);
 var month=parseInt(document.getElementById('bdayMonthInput').value);
 if(!name){alert('Digite o nome!');return;}
-if(!day||day&lt;1||day>31){alert('Selecione o dia!');return;}
-if(isNaN(month)||month&lt;0||month>11){alert('Selecione o mês!');return;}
-var bdays=getBirthdays();
+if(!day||day<1||day>31){alert('Selecione o dia!');return;}
+if(isNaN(month)||month<0||month>11){alert('Selecione o mês!');return;}
 if(bdayEditId){
-for(var i=0;i<bdays.length;i++){if(bdays[i].id===bdayEditId){bdays[i].name=name;bdays[i].day=day;bdays[i].month=month;break;}}
+dbRef.ref('birthdays/'+bdayEditId).update({name:name,day:day,month:month});
 }else{
-bdays.push({id:'bday_'+Date.now(),name:name,day:day,month:month});
+dbRef.ref('birthdays').push({name:name,day:day,month:month});
 }
-saveBirthdays(bdays);
 toggleBdayForm();
-renderBdayMonthTabs();
-renderBirthdays();
 }
 function editBday(id){
-var bdays=getBirthdays();
+var bdays=window.bdaysCache||[];
 var b=null;
 for(var i=0;i<bdays.length;i++){if(bdays[i].id===id){b=bdays[i];break;}}
 if(!b){return;}
@@ -459,12 +471,9 @@ document.getElementById('bdayNameInput').focus();
 }
 function deleteBday(id){
 if(!confirm('Excluir este aniversariante?')){return;}
-var bdays=getBirthdays();
-for(var i=0;i<bdays.length;i++){if(bdays[i].id===id){bdays.splice(i,1);break;}}
-saveBirthdays(bdays);
-renderBdayMonthTabs();
-renderBirthdays();
+dbRef.ref('birthdays/'+id).remove();
 }
+
 function initWeekResponsible(){var offset=(getWeekOffset()+weekOffset)%members.length;var responsible=members[offset];var role=roles[offset%roles.length];document.getElementById('week-name').textContent=responsible;document.getElementById('week-role').textContent='Função: '+role.name;}
 function rotateWeekResponsible(){weekOffset++;initWeekResponsible();initScale();}
 function initArtResponsible(){var offset=(getWeekOffset()+artOffset)%members.length;var artPerson=members[offset];document.getElementById('art-name').textContent=artPerson;}
@@ -517,58 +526,24 @@ var targetDate=new Date(parts[0],parts[1]-1,parts[2],23,59,59);
 var now=new Date();
 var diff=targetDate-now;
 if(dl.done){
-box.className='deadline-box done';
-countEl.className='deadline-count done';
-countEl.textContent='✅';
-textEl.textContent='Arte entregue!';
-dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');
-btnDone.style.display='none';
-btnReset.style.display='inline-block';
-inputRow.style.display='none';
-}else if(diff&lt;=0){
-box.className='deadline-box urgent';
-countEl.className='deadline-count urgent';
-countEl.textContent='⚠️';
-textEl.textContent='ATRASADO!';
-dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');
-btnDone.style.display='block';
-btnDone.textContent='⚠️ Entregar Agora';
-btnReset.style.display='inline-block';
-inputRow.style.display='none';
+box.className='deadline-box done';countEl.className='deadline-count done';countEl.textContent='✅';textEl.textContent='Arte entregue!';dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt-BR');btnDone.style.display='none';btnReset.style.display='inline-block';inputRow.style.display='none';
+}else if(diff<=0){
+box.className='deadline-box urgent';countEl.className='deadline-count urgent';countEl.textContent='⚠️';textEl.textContent='ATRASADO!';dateDisp.textContent='Prazo esgotou em '+targetDate.toLocaleDateString('pt-BR');btnDone.style.display='block';btnDone.textContent='Entregar Agora';btnReset.style.display='inline-block';inputRow.style.display='none';
 }else{
-var days=Math.floor(diff/86400000);
-var hours=Math.floor((diff%86400000)/3600000);
-box.className='deadline-box';
-countEl.className='deadline-count';
-if(days&lt;=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}
-countEl.textContent=days;
-if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}
-if(hours>0&&days&lt;2){textEl.textContent+=' e '+hours+'h';}
-dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';
-btnDone.style.display='block';
-btnDone.textContent='✅ Concluído';
-btnReset.style.display='inline-block';
-inputRow.style.display='none';
+var days=Math.floor(diff/86400000);var hours=Math.floor((diff%86400000)/3600000);box.className='deadline-box';countEl.className='deadline-count';if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}countEl.textContent=days;if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';btnDone.style.display='block';btnDone.textContent='Concluído';btnReset.style.display='inline-block';inputRow.style.display='none';
 }
 }
 function markDone(){
 var saved=JSON.parse(localStorage.getItem('deadline')||'null');
 if(!saved){return;}
-saved.done=true;
-saved.doneAt=new Date().toISOString();
+saved.done=true;saved.doneAt=new Date().toISOString();
 localStorage.setItem('deadline',JSON.stringify(saved));
 updateDeadline(saved);
 }
-function resetDeadline(){
-localStorage.removeItem('deadline');
-showDeadlineForm();
-}
-setInterval(function(){
-var saved=JSON.parse(localStorage.getItem('deadline')||'null');
-if(saved&&!saved.done){updateDeadline(saved);}
-},60000);
+function resetDeadline(){localStorage.removeItem('deadline');showDeadlineForm();}
+setInterval(function(){var saved=JSON.parse(localStorage.getItem('deadline')||'null');if(saved&&!saved.done){updateDeadline(saved);}},60000);
 function initHinos(){var saved=JSON.parse(localStorage.getItem('hinos')||'[]');renderHinos(saved);}
-function renderHinos(hinos){var container=document.getElementById('hinos-grid');document.getElementById('hino-count').textContent=hinos.length+' hinos';var html='';for(var i=0;i<hinos.length;i++){var h=hinos[i];var badge=h.kind==='file'?'<span class="hino-badge file">📂 Arquivo</span>':'<span class="hino-badge link">🔗 Link</span>';var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';}html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">➕</div><div>Adicionar Hino</div></div>';container.innerHTML=html;}
+function renderHinos(hinos){var container=document.getElementById('hinos-grid');document.getElementById('hino-count').textContent=hinos.length+' hinos';var html='';for(var i=0;i<hinos.length;i++){var h=hinos[i];var badge=h.kind==='file'?'<span class="hino-badge file">Arquivo</span>':'<span class="hino-badge link">Link</span>';var clickAction=h.kind==='file'?'onclick="playHinoFile('+i+')"':'onclick="playHinoLink('+i+')"';html+='<div class="hino-card" '+clickAction+'><div class="hino-icon">'+h.icon+'</div><div class="hino-title">'+h.name+'</div><div class="hino-type">'+h.type+'</div>'+badge+'<button class="hino-del" onclick="event.stopPropagation();removeHino('+i+')">Excluir</button></div>';}html+='<div class="hino-add" onclick="showHinoChoice()"><div style="font-size:2rem">+</div><div>Adicionar Hino</div></div>';container.innerHTML=html;}
 function showHinoChoice(){var choice=confirm('OK = UPLOAD de arquivo\nCancelar = usar link');if(choice){document.getElementById('fileInput').click();}else{var name=prompt('Nome do hino:');if(!name)return;var link=prompt('Cole o link do Google Drive:');if(!link)return;var type=prompt('Tipo:','Vídeo com letra');if(!type)type='Vídeo com letra';var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,link:link,type:type,icon:'🎵',kind:'link'});localStorage.setItem('hinos',JSON.stringify(hinos));renderHinos(hinos);}}
 document.getElementById('fileInput').addEventListener('change',function(e){var file=e.target.files[0];if(!file)return;var name=prompt('Nome do hino:','');if(!name){e.target.value='';return;}var type=prompt('Tipo:','Vídeo com letra');if(!type)type='Vídeo com letra';var hinoId='hino_'+Date.now();var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');hinos.unshift({name:name,type:type,icon:'🎵',kind:'file',hinoId:hinoId});localStorage.setItem('hinos',JSON.stringify(hinos));saveVideoToDb(hinoId,file,function(ok){if(ok){alert('"'+name+'" salvo!');}else{alert('Erro. Tente um arquivo menor.');}renderHinos(hinos);});e.target.value='';});
 function playHinoFile(i){var hinos=JSON.parse(localStorage.getItem('hinos')||'[]');var h=hinos[i];getVideoFromDb(h.hinoId,function(blob){if(blob){var url=URL.createObjectURL(blob);document.getElementById('videoModalTitle').textContent='▶ '+h.name;var modal=document.getElementById('videoModal');modal.classList.add('active');document.getElementById('videoPlayer').src=url;}else{alert('Arquivo não encontrado.');}});}
