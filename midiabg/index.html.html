@@ -341,14 +341,14 @@ request.onerror=function(e){console.log('Erro DB:'+e.target.error);};
 function saveVideoToDb(id,blob,callback){if(!db){callback(false);return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');var req=store.put({id:id,blob:blob});req.onsuccess=function(){callback(true);};req.onerror=function(){callback(false);};}
 function getVideoFromDb(id,callback){if(!db){callback(null);return;}var tx=db.transaction(['videos'],'readonly');var store=tx.objectStore('videos');var req=store.get(id);req.onsuccess=function(e){if(e.target.result){callback(e.target.result.blob);}else{callback(null);}};req.onerror=function(){callback(null);};}
 function deleteVideoFromDb(id,callback){if(!db){callback();return;}var tx=db.transaction(['videos'],'readwrite');var store=tx.objectStore('videos');store.delete(id);tx.oncomplete=function(){callback();};}
-function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i<12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
+function initBgIcons(){var container=document.getElementById('bgIcons');var html='';for(var i=0;i&lt;12;i++){var icon=bgIcons[i%bgIcons.length];var left=Math.random()*100;var size=1.5+Math.random()*2.5;var delay=Math.random()*15;var dur=12+Math.random()*10;var animType=Math.random()>0.5?'floatUp':'floatSide';html+='<div class="bg-icon" style="left:'+left+'%;font-size:'+size+'rem;animation:'+animType+' '+dur+'s linear '+delay+'s infinite">'+icon+'</div>';}container.innerHTML=html;}
 function getWeekNumber(d){var date=new Date(d);date.setHours(0,0,0,0);date.setDate(date.getDate()+3-(date.getDay()+6)%7);var week1=new Date(date.getFullYear(),0,4);return 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7);}
 function getWeekOffset(){var weekNum=getWeekNumber(new Date());var baseWeek=32;return ((weekNum-baseWeek)%members.length+members.length)%members.length;}
 function initMotivation(){var today=new Date();var dayOfWeek=today.getDay();var m=motivations[dayOfWeek%motivations.length];document.getElementById('motivation-text').textContent=m.text;document.getElementById('motivation-author').textContent='— '+m.author;}
 
 function initBdayDayOptions(){
 var sel=document.getElementById('bdayDayInput');
-for(var i=1;i<=31;i++){
+for(var i=1;i&lt;=31;i++){
 var opt=document.createElement('option');
 opt.value=i;opt.textContent=i;
 sel.appendChild(opt);
@@ -368,7 +368,7 @@ var now=new Date();
 var currentMonth=now.getMonth();
 var container=document.getElementById('bdayMonthTabs');
 var html='<div class="bday-month-tab '+(bdayFilterMonth==='all'?'active':'')+'" onclick="setBdayFilter(\'all\',this)">Todos ('+bdays.length+')</div>';
-for(var m=0;m<12;m++){
+for(var m=0;m&lt;12;m++){
 var count=bdays.filter(function(b){return b.month===m;}).length;
 var cls='';
 if(bdayFilterMonth==m){cls=' active';}
@@ -431,8 +431,8 @@ var name=document.getElementById('bdayNameInput').value.trim();
 var day=parseInt(document.getElementById('bdayDayInput').value);
 var month=parseInt(document.getElementById('bdayMonthInput').value);
 if(!name){alert('Digite o nome!');return;}
-if(!day||day<1||day>31){alert('Selecione o dia!');return;}
-if(isNaN(month)||month<0||month>11){alert('Selecione o mês!');return;}
+if(!day||day&lt;1||day>31){alert('Selecione o dia!');return;}
+if(isNaN(month)||month&lt;0||month>11){alert('Selecione o mês!');return;}
 var bdays=getBirthdays();
 if(bdayEditId){
 for(var i=0;i<bdays.length;i++){if(bdays[i].id===bdayEditId){bdays[i].name=name;bdays[i].day=day;bdays[i].month=month;break;}}
@@ -525,7 +525,7 @@ dateDisp.textContent='Concluído em '+new Date(dl.doneAt).toLocaleDateString('pt
 btnDone.style.display='none';
 btnReset.style.display='inline-block';
 inputRow.style.display='none';
-}else if(diff<=0){
+}else if(diff&lt;=0){
 box.className='deadline-box urgent';
 countEl.className='deadline-count urgent';
 countEl.textContent='⚠️';
@@ -540,10 +540,10 @@ var days=Math.floor(diff/86400000);
 var hours=Math.floor((diff%86400000)/3600000);
 box.className='deadline-box';
 countEl.className='deadline-count';
-if(days<=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}
+if(days&lt;=1){box.className='deadline-box urgent';countEl.className='deadline-count urgent';}
 countEl.textContent=days;
 if(days===1){textEl.textContent='dia restante';}else{textEl.textContent='dias restantes';}
-if(hours>0&&days<2){textEl.textContent+=' e '+hours+'h';}
+if(hours>0&&days&lt;2){textEl.textContent+=' e '+hours+'h';}
 dateDisp.textContent='Prazo: '+targetDate.toLocaleDateString('pt-BR')+' às 23:59';
 btnDone.style.display='block';
 btnDone.textContent='✅ Concluído';
